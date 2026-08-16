@@ -1,0 +1,607 @@
+<title>轉貨訊息</title>
+<style>
+:root {
+  --bg: #F0EFEA;
+  --card: #FAFAF8;
+  --card-border: #D6D5CD;
+  --text: #1D1D1B;
+  --text-2: #6E6E64;
+  --text-3: #9E9E94;
+  --accent: #3168A8;
+  --accent-hover: #285590;
+  --accent-subtle: #E8EFF8;
+  --success: #2F7A4D;
+  --success-bg: #E6F4EC;
+  --input-bg: #FFFFFF;
+  --input-border: #C8C7BF;
+  --input-focus: #3168A8;
+  --dropdown-hover: #EDECE7;
+  --preview-bg: #27272A;
+  --preview-text: #E8E8E4;
+  --preview-label: #A0A09A;
+  --tag-bg: #E8EFF8;
+  --tag-text: #3168A8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161618;
+    --card: #1E1E21;
+    --card-border: #2E2E32;
+    --text: #E4E4E0;
+    --text-2: #9A9A90;
+    --text-3: #6A6A62;
+    --accent: #6BA3E0;
+    --accent-hover: #82B4E8;
+    --accent-subtle: #1C2A3C;
+    --success: #5CB87A;
+    --success-bg: #1A2E22;
+    --input-bg: #252528;
+    --input-border: #3A3A3E;
+    --input-focus: #6BA3E0;
+    --dropdown-hover: #2A2A2E;
+    --preview-bg: #111113;
+    --preview-text: #D4D4D0;
+    --preview-label: #7A7A72;
+    --tag-bg: #1C2A3C;
+    --tag-text: #6BA3E0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161618;
+  --card: #1E1E21;
+  --card-border: #2E2E32;
+  --text: #E4E4E0;
+  --text-2: #9A9A90;
+  --text-3: #6A6A62;
+  --accent: #6BA3E0;
+  --accent-hover: #82B4E8;
+  --accent-subtle: #1C2A3C;
+  --success: #5CB87A;
+  --success-bg: #1A2E22;
+  --input-bg: #252528;
+  --input-border: #3A3A3E;
+  --input-focus: #6BA3E0;
+  --dropdown-hover: #2A2A2E;
+  --preview-bg: #111113;
+  --preview-text: #D4D4D0;
+  --preview-label: #7A7A72;
+  --tag-bg: #1C2A3C;
+  --tag-text: #6BA3E0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 28px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+.field:last-child { margin-bottom: 0; }
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 5px;
+  letter-spacing: 0.02em;
+}
+
+.field input, .field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus, .field textarea:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--input-focus) 15%, transparent);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 38px;
+  line-height: 1.4;
+}
+
+.field input::placeholder, .field textarea::placeholder {
+  color: var(--text-3);
+}
+
+.model-wrap {
+  position: relative;
+}
+
+.model-wrap input {
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+}
+
+.dropdown.open { display: block; }
+
+.dropdown .item {
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--card-border);
+}
+.dropdown .item:last-child { border-bottom: none; }
+
+.dropdown .item:hover,
+.dropdown .item.active {
+  background: var(--dropdown-hover);
+}
+
+.dropdown .item .code {
+  font-weight: 600;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dropdown .item .name {
+  color: var(--text-2);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.product-name-display {
+  padding: 8px 10px;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--accent-subtle);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.product-name-display.empty {
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.preview-section {
+  margin-top: 8px;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.preview-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  user-select: none;
+}
+
+.copy-btn:hover { background: var(--accent-hover); }
+.copy-btn:active { transform: scale(0.97); }
+
+.copy-btn.copied {
+  background: var(--success);
+}
+
+.preview-box {
+  background: var(--preview-bg);
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-family: "SF Mono", SFMono-Regular, ui-monospace, Menlo, monospace;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--preview-text);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+  min-height: 100px;
+  position: relative;
+}
+
+.preview-box .line-label {
+  color: var(--preview-label);
+}
+
+.reset-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-3);
+  background: transparent;
+  border: 1px dashed var(--card-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-top: 8px;
+}
+.reset-btn:hover {
+  color: var(--text-2);
+  border-color: var(--text-3);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--success);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 100;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+
+<div class="wrap">
+  <h1>轉貨需求</h1>
+  <p class="subtitle">輸入型號自動帶入品名，填寫完畢後一鍵複製</p>
+
+  <div class="card">
+    <div class="field">
+      <label>型號</label>
+      <div class="model-wrap">
+        <input type="text" id="modelInput" placeholder="輸入型號，例如 MXN63" autocomplete="off" spellcheck="false">
+        <div class="dropdown" id="dropdown"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>品名 <span class="tag" id="matchTag" style="display:none">自動帶入</span></label>
+      <div class="product-name-display empty" id="productName">輸入型號後自動帶入</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="field">
+        <label>庫存門市</label>
+        <input type="text" id="fromStore" placeholder="880">
+      </div>
+      <div class="field">
+        <label>需求門市</label>
+        <input type="text" id="toStore" placeholder="75" value="75">
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="field">
+        <label>帳上數量</label>
+        <input type="text" id="stockQty" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label>需求數量</label>
+        <input type="text" id="needQty" placeholder="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>備註</label>
+      <textarea id="remark" placeholder="選填" rows="1"></textarea>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-header">
+      <span class="preview-label">訊息預覽</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyMessage()">複製訊息</button>
+    </div>
+    <div class="preview-box" id="previewBox"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetForm()">清空重填</button>
+</div>
+
+<div class="toast" id="toast">已複製到剪貼簿</div>
+
+<script>
+const P = [{"s":"MC747TA/A","n":"45W Magsafe Power MC747"},{"s":"MD564FE/A","n":"APPLE USB SUPERDRIVE MD564"},{"s":"MD592TA/A","n":"45W Magsafe 2 Power MD592"},{"s":"MD825FE/A","n":"Lightning to VGA Adapter MD825"},{"s":"MJ1L2FE/A","n":"USB-C VGA Adapter MJ1L2"},{"s":"MRMH2TA/A","n":"Magic Keyboard繁中數字灰 MRMH2"},{"s":"S6446ZM/A","n":"AC+ for HomePod S6446"},{"s":"MWTY2FE/A","n":"44mm 氈布錶環 錨灰色 MWTY2"},{"s":"MX832FE/A","n":"44 氈布錶環XL 錨灰色 MX832"},{"s":"MWRF2FE/A","n":"40 時尚錶帶 黑色S MWRF2"},{"s":"MWRG2FE/A","n":"40 時尚錶帶 黑色M MWRG2"},{"s":"MWRH2FE/A","n":"40 時尚錶帶 黑色L MWRG2"},{"s":"MX432PA/A","n":"Beats Solo3 WL 黑 MX432"},{"s":"MX442PA/A","n":"Beats Solo3 WL 玫瑰金 MX442"},{"s":"MX472PA/A","n":"Beats Solo3 WL 紅 MX472"},{"s":"MWV92FE/A","n":"MBP 16\" 皮革護套 馬鞍棕 MWV92"},{"s":"MWVA2FE/A","n":"MBP 16\" 皮革護套 黑色 MWVA2"},{"s":"MWVC2FE/A","n":"MBP 16\" 皮革護套 午夜藍 MWVC2"},{"s":"MWUQ2FE/A","n":"44mm 運動錶帶 綠玉石 MWUQ2"},{"s":"MXNL2TA/A","n":"12.9 6th 聰穎鍵盤 中 MXNL2"},{"s":"MXNL2TE/A","n":"12.9 6th 聰穎鍵盤 英 MXNL2"},{"s":"MXT52FE/A","n":"iPad Pro 11 Case 粉沙 MXT52"},{"s":"MXTA2FE/A","n":"iPad Pro 12.9 Case 粉沙 MXTA2"},{"s":"MX572FE/A","n":"Mac Pro 輪組套件 MX572"},{"s":"MXNM2FE/A","n":"Mac Pro 腳座套件 MXNM2"},{"s":"MXY82TA/A","n":"Beats Powerbeats Pro 冰川藍 MXY82"},{"s":"MXP32FE/A","n":"40mm 運動錶帶 岩灰色 MXP32"},{"s":"MXP42FE/A","n":"40mm 運動錶帶 維他橙 MXP42"},{"s":"MXP52FE/A","n":"40mm 運動錶帶 浪花綠 MXP52"},{"s":"MXWQ2FE/A","n":"40mm 運動錶帶 亞麻藍 MXWQ2"},{"s":"MXP62FE/A","n":"44mm 運動錶帶 岩灰色 MXP62"},{"s":"MXP72FE/A","n":"44mm 運動錶帶 維他橙 MXP72"},{"s":"MXP82FE/A","n":"44mm 運動錶帶 浪花綠 MXP82"},{"s":"MXWR2FE/A","n":"44mm 運動錶帶 亞麻藍 MXWR2"},{"s":"2000130096827","n":"[i]Care iPad M/A 一年期_1590"},{"s":"2000130096834","n":"[i]Care iPad M/A/A16 兩年_2118"},{"s":"2000130096865","n":"[i]Care AW S11 一年期_1630"},{"s":"2000130096872","n":"[i]Care AW S11 兩年期_2230"},{"s":"2000130096889","n":"[i]Care AirPods 一年期_815"},{"s":"2000130096896","n":"[i]Care AirPods 兩年期_959"},{"s":"MGN03TA/A","n":"12W USB Power Adapter MGN03"},{"s":"MG3W3FE/A","n":"44 N 運動錶帶 灰霧綠 MG3W3"},{"s":"MG433FE/A","n":"44mm 運動錶帶 賽勒綠 MG433"},{"s":"MGX43FE/A","n":"44mm 運動錶環 木炭L MGX43"},{"s":"MY622FE/A","n":"40mm 時尚錶帶 粉橘色L MY622"},{"s":"MY642FE/A","n":"40mm 時尚錶帶 石榴色M MY642"},{"s":"MY652FE/A","n":"40mm 時尚錶帶 石榴色L MY652"},{"s":"MY662FE/A","n":"40mm 時尚錶帶 緋紅色S MY662"},{"s":"MY672FE/A","n":"40mm 時尚錶帶 緋紅色M MY672"},{"s":"MY682FE/A","n":"40mm 時尚錶帶 緋紅色L MY682"},{"s":"MY962FE/A","n":"40mm 鏈紋錶帶 馬鞍棕S MY962"},{"s":"MY982FE/A","n":"40mm 鏈紋錶帶 波羅藍S MY982"},{"s":"MY992FE/A","n":"40mm 鏈紋錶帶 波羅藍L MY992"},{"s":"MY9A2FE/A","n":"40mm 鏈紋錶帶 黑S MY9A2"},{"s":"MY9E2FE/A","n":"40mm 鏈紋錶帶 罌粟色L MY9E2"},{"s":"MY9M2FE/A","n":"44mm 鏈紋錶帶 黑S MY9M2"},{"s":"MY9N2FE/A","n":"44mm 鏈紋錶帶 黑L MY9N2"},{"s":"MGYV3FE/A","n":"iPad Mini Cover 賽勒綠 MGYV3"},{"s":"MGYW3FE/A","n":"iPad Mini Cover 粉橘色 MGYW3"},{"s":"MH0A3FE/A","n":"iPad Air 10.9 Case 白 MH0A3"},{"s":"MH0D3FE/A","n":"iPad Air 10.9 Case 黑 MH0D3"},{"s":"2000130166148","n":"[i]Care AW SE 一年期_1220"},{"s":"2000130166155","n":"[i]Care AW SE 兩年期_1620"},{"s":"MHLP3FE/A","n":"MagSafe 皮革卡套 罌粟 MHLP3"},{"s":"MHLQ3FE/A","n":"MagSafe 皮革卡套 海藍 MHLQ3"},{"s":"MHLR3FE/A","n":"MagSafe 皮革卡套 棕 MHLR3"},{"s":"MHLT3FE/A","n":"MagSafe 皮革卡套 黑 MHLT3"},{"s":"MYMC2ZP/A","n":"Beats Flex 入耳 黑紅 MYMC2"},{"s":"MYMD2ZP/A","n":"Beats Flex 入耳 柚黃 MYMD2"},{"s":"MY5G2TA/A","n":"HomePod mini 灰 MY5G2"},{"s":"MY5H2TA/A","n":"HomePod mini 白 MY5H2"},{"s":"S9043ZX/A","n":"AC+ for HomePod mini S9043"},{"s":"MYME2ZP/A","n":"Beats Flex 入耳 卡其灰 MYME2"},{"s":"MYMG2ZP/A","n":"Beats Flex 入耳 冷豔藍 MYMG2"},{"s":"MXK22FE/A","n":"Lightning to 3.5mm 線 MXK22"},{"s":"S9086ZX/A","n":"AC+ for AirPods Max S9086"},{"s":"S9066ZX/A","n":"AC+ for AirPods S9066"},{"s":"S9094ZX/A","n":"AC+ for Beats S9094"},{"s":"2000130179483","n":"[i]Care AirPods Max 一年_1223"},{"s":"2000130179490","n":"[i]Care AirPods Max 兩年_1609"},{"s":"MY592TA/A","n":"Beats Powerbeats Pro 海軍藍 MY592"},{"s":"MK0E3FE/A","n":"MagSafe 皮革卡套 桑紅 MK0E3"},{"s":"MHJ23FE/A","n":"AirTag 鑰匙圈 海藍 MHJ23"},{"s":"MK103FE/A","n":"AirTag 鑰匙圈 紅 MK103"},{"s":"MK0V3FE/A","n":"AirTag 皮掛環 紅 MK0V3"},{"s":"MJ6G3FE/A","n":"40 N 運動錶帶 暗綠銀 MJ6G3"},{"s":"MJ6H3FE/A","n":"40 N 運動錶帶 藍光綠 MJ6H3"},{"s":"MJ6J3FE/A","n":"40 N 運動錶帶 鐵灰黑 MJ6J3"},{"s":"MJ6K3FE/A","n":"44 N 運動錶帶 暗綠銀 MJ6K3"},{"s":"MJ6L3FE/A","n":"44 N 運動錶帶 藍光綠 MJ6L3"},{"s":"MJ6M3FE/A","n":"44 N 運動錶帶 鐵灰黑 MJ6M3"},{"s":"MJFR3FE/A","n":"40mm 運動錶環 海鹽 MJFR3"},{"s":"MJFT3FE/A","n":"40mm 運動錶環 向日葵 MJFT3"},{"s":"MJFU3FE/A","n":"40mm 運動錶環 橄欖 MJFU3"},{"s":"MJFV3FE/A","n":"40mm 運動錶環 深淵藍 MJFV3"},{"s":"MJFW3FE/A","n":"40mm 運動錶環 紅 MJFW3"},{"s":"MJFY3FE/A","n":"44mm 運動錶環 海鹽 MJFY3"},{"s":"MJG03FE/A","n":"44mm 運動錶環 向日葵 MJG03"},{"s":"MJG13FE/A","n":"44mm 運動錶環 橄欖 MJG13"},{"s":"MJG23FE/A","n":"44mm 運動錶環 深淵藍 MJG23"},{"s":"MJG33FE/A","n":"44mm 運動錶環 紅 MJG33"},{"s":"MJK23FE/A","n":"40mm 運動錶帶 卡布藍 MJK23"},{"s":"MJK33FE/A","n":"40mm 運動錶帶 哈密瓜 MJK33"},{"s":"MJK43FE/A","n":"40mm 運動錶帶 綠頭鴨 MJK43"},{"s":"MJK53FE/A","n":"44mm 運動錶帶 卡布藍 MJK53"},{"s":"MJK63FE/A","n":"44mm 運動錶帶 哈密瓜 MJK63"},{"s":"MJK73FE/A","n":"44mm 運動錶帶 綠頭鴨 MJK73"},{"s":"MJKD3FE/A","n":"40mm 鏈紋錶帶 粉筆白S MJKD3"},{"s":"MJKE3FE/A","n":"40mm 鏈紋錶帶 粉筆白L MJKE3"},{"s":"MJKR3FE/A","n":"44mm 鏈紋錶帶 粉筆白S MJKR3"},{"s":"MJKT3FE/A","n":"44mm 鏈紋錶帶 粉筆白L MJKT3"},{"s":"MJM43FE/A","n":"iPad Mini Cover 綠頭鴨 MJM43"},{"s":"MJM63FE/A","n":"iPad Mini Cover 電光橙 MJM63"},{"s":"MJM23FE/A","n":"iPad Air 4 Case 電光橙 MJM23"},{"s":"S9634ZX/A","n":"AC+ for Apple TV S9634"},{"s":"MJWN3FE/A","n":"40 N 運動錶環 彩虹 MJWN3"},{"s":"MJWP3FE/A","n":"44 N 運動錶環 彩虹 MJWP3"},{"s":"2000130185989","n":"[i]Care MBA 15一年期_4460"},{"s":"MLYX3FE/A","n":"AirTag 掛環 卡布藍 MLYX3"},{"s":"MM003FE/A","n":"AirTag 皮掛環 檸檬 MM003"},{"s":"MM043FE/A","n":"AirTag 皮掛環 海藍 MM043"},{"s":"MM063FE/A","n":"AirTag 鑰匙圈 檸檬 MM063"},{"s":"MJ4X3TA/A","n":"Beats Studio Buds 無線黑 MJ4X3"},{"s":"MJ4Y3TA/A","n":"Beats Studio Buds 無線白 MJ4Y3"},{"s":"MJ503TA/A","n":"Beats Studio Buds 無線紅 MJ503"},{"s":"MM0Q3FE/A","n":"MagSafe 皮革卡套 金棕 MM0Q3"},{"s":"MM0T3FE/A","n":"MagSafe 皮革卡套 櫻桃 MM0T3"},{"s":"MM0W3FE/A","n":"MagSafe 皮革卡套 紫藤 MM0W3"},{"s":"MM0X3FE/A","n":"MagSafe 皮革卡套 杉綠 MM0X3"},{"s":"MMFA3FE/A","n":"AirTag 鑰匙圈 金棕 MMFA3"},{"s":"MMFC3FE/A","n":"AirTag 鑰匙圈 紫藤 MMFC3"},{"s":"MM6G3FE/A","n":"iPad Mini 6th Case 黑 MM6G3"},{"s":"MM6H3FE/A","n":"iPad Mini 6th Case 白 MM6H3"},{"s":"MM6J3FE/A","n":"iPad Mini 6th Case 橙 MM6J3"},{"s":"MM6K3FE/A","n":"iPad Mini 6th Case 櫻桃 MM6K3"},{"s":"MM6L3FE/A","n":"iPad Mini 6th Case 薰衣 MM6L3"},{"s":"MM6N3FE/A","n":"iPad Pro 11 Case 薰衣草 MM6N3"},{"s":"MM6P3FE/A","n":"iPad Pro 12.9 Case 薰衣草 MM6P3"},{"s":"MJ2C3TA/A","n":"HomePod mini 藍 MJ2C3"},{"s":"MJ2D3TA/A","n":"HomePod mini 橘 MJ2D3"},{"s":"MJ2E3TA/A","n":"HomePod mini 黃 MJ2E3"},{"s":"MK2F3TA/A","n":"Beats Fit Pro 黑 MK2F3"},{"s":"MK2G3TA/A","n":"Beats Fit Pro 白 MK2G3"},{"s":"MK2H3TA/A","n":"Beats Fit Pro 紫 MK2H3"},{"s":"MK2J3TA/A","n":"Beats Fit Pro 灰 MK2J3"},{"s":"MNA43FE/A","n":"iPad Air 5 Case 暗櫻桃 MNA43"},{"s":"MNA63FE/A","n":"iPad Air 5 Case 薰衣草 MNA63"},{"s":"MNA73FE/A","n":"iPad Air 5 Case 海藍 MNA73"},{"s":"2000130209227","n":"[i]Care iPad Air 11 兩年_2420"},{"s":"MMT73TA/A","n":"Beats Studio Buds 無線藍 MMT73"},{"s":"MMT83TA/A","n":"Beats Studio Buds 無線粉 MMT83"},{"s":"MMT93TA/A","n":"Beats Studio Buds 無線灰 MMT93"},{"s":"MN6M3FE/A","n":"41mm N 運動錶環 彩虹 MN6M3"},{"s":"MN6N3FE/A","n":"45mm N 運動錶環 彩虹 MN6N3"},{"s":"MPU73FE/A","n":"iPhone 14 PM 透明 MPU73"},{"s":"MQE93FE/A","n":"49 海洋錶帶 白色 MQE93"},{"s":"MQEA3FE/A","n":"49 海洋錶帶 白 加長節 MQEA3"},{"s":"2000130226545","n":"[i]Care AW Ultra 一年期_1850"},{"s":"2000130226552","n":"[i]Care AW Ultra 兩年期_2990"},{"s":"MN873TA/A","n":"Apple TV 4K WiFi 64 MN873"},{"s":"MN893TA/A","n":"Apple TV 4K 乙太 128 MN893"},{"s":"MQDP3TA/A","n":"iPad 10th 巧控鍵盤 中 MQDP3"},{"s":"MQLH3TA/A","n":"Beats Studio Buds 黑金 MQLH3"},{"s":"MQLJ3TA/A","n":"Beats Studio Buds 象牙白 MQLJ3"},{"s":"MQLK3TA/A","n":"Beats Studio Buds 透明 MQLK3"},{"s":"MQTP3ZP/A","n":"Beats Studio Pro WL 黑 MQTP3"},{"s":"MQTQ3ZP/A","n":"Beats Studio Pro WL 藍 MQTQ3"},{"s":"MQTR3ZP/A","n":"Beats Studio Pro WL 白 MQTR3"},{"s":"MQTT3ZP/A","n":"Beats Studio Pro WL 棕 MQTT3"},{"s":"MT2P3TA/A","n":"Beats Studio Buds 宇宙銀 MT2P3"},{"s":"MT2Q3TA/A","n":"Beats Studio Buds 宇宙粉 MT2Q3"},{"s":"MT183FE/A","n":"iPhone 15+ 矽膠殼 松柏色 MT183"},{"s":"MT193FE/A","n":"iPhone 15+ 矽膠殼 冬藍色 MT193"},{"s":"MT1A3FE/A","n":"iPhone 15 P 矽膠 黑色 MT1A3"},{"s":"MT1D3FE/A","n":"iPhone 15 P 矽膠 風暴藍 MT1D3"},{"s":"MT1E3FE/A","n":"iPhone 15 P 矽膠 陶土色 MT1E3"},{"s":"MT1F3FE/A","n":"iPhone 15 P 矽膠 淡粉色 MT1F3"},{"s":"MT1L3FE/A","n":"iPhone 15 P 矽膠 冬藍色 MT1L3"},{"s":"MT1M3FE/A","n":"iPhone 15 PM 矽膠 黑色 MT1M3"},{"s":"MT1P3FE/A","n":"iPhone 15 PM 矽膠 風暴藍 MT1P3"},{"s":"MT1Q3FE/A","n":"iPhone 15 PM 矽膠 陶土色 MT1Q3"},{"s":"MT1U3FE/A","n":"iPhone 15 PM 矽膠 淡粉色 MT1U3"},{"s":"MT223FE/A","n":"iPhone 15 Pro 透明殼 MT223"},{"s":"MT233FE/A","n":"iPhone 15 PM 透明殼 MT233"},{"s":"MT4D3FE/A","n":"iPhone 15+ 織紋殼 海洋藍 MT4D3"},{"s":"MT4F3FE/A","n":"iPhone 15+ 織紋殼 長青色 MT4F3"},{"s":"MT4J3FE/A","n":"iPhone 15 P 織紋殼 淺褐 MT4J3"},{"s":"MT4L3FE/A","n":"iPhone 15 P 織紋殼 桑椹 MT4L3"},{"s":"MT4Q3FE/A","n":"iPhone 15 P 織紋殼 海藍 MT4Q3"},{"s":"MT4V3FE/A","n":"iPhone 15 PM 織紋殼 黑色 MT4V3"},{"s":"MT4W3FE/A","n":"iPhone 15 PM 織紋殼 淺褐 MT4W3"},{"s":"MUQX3FE/A","n":"USB-C to L 轉接器 MUQX3"},{"s":"MT2H3FE/A","n":"AirTag 織紋鑰匙圈 黑色 MT2H3"},{"s":"MT2J3FE/A","n":"AirTag 織紋鑰匙圈 桑椹 MT2J3"},{"s":"MT2K3FE/A","n":"AirTag 織紋鑰匙圈 海藍 MT2K3"},{"s":"MT2L3FE/A","n":"AirTag 織紋鑰匙圈 淺褐色 MT2L3"},{"s":"MT2M3FE/A","n":"AirTag 織紋鑰匙圈 珊瑚色 MT2M3"},{"s":"MT5N3FE/A","n":"49mm 高山錶環 靛青 S MT5N3"},{"s":"MT5Q3FE/A","n":"49mm 高山錶環 靛青 M MT5Q3"},{"s":"MT5R3FE/A","n":"49mm 高山錶環 靛青 L MT5R3"},{"s":"MT613FE/A","n":"49mm 越野錶環 藍黑 S/M MT613"},{"s":"MT623FE/A","n":"49mm 越野錶環 藍黑 M/L MT623"},{"s":"MUQ13FE/A","n":"41mm 運動錶帶 驕傲版 S/M MUQ13"},{"s":"MUQ23FE/A","n":"41mm 運動錶帶 驕傲版 M/L MUQ23"},{"s":"MUQ33FE/A","n":"45mm 運動錶帶 驕傲版 S/M MUQ33"},{"s":"MUQ43FE/A","n":"45mm 運動錶帶 驕傲版 M/L MUQ43"},{"s":"MUUK3FE/A","n":"41 N 運動錶帶 純鉑金 S/M MUUK3"},{"s":"MUUL3FE/A","n":"41 N 運動錶帶 純鉑金 M/L MUUL3"},{"s":"MUUN3FE/A","n":"41 N 運動錶帶 午夜空 S/M MUUN3"},{"s":"MUUP3FE/A","n":"41 N 運動錶帶 午夜空 M/L MUUP3"},{"s":"MUUR3FE/A","n":"41 N 運動錶帶 沙漠石 M/L MUUR3"},{"s":"MUUT3FE/A","n":"41 N 運動錶帶 焰藍色 S/M MUUT3"},{"s":"MUUU3FE/A","n":"41 N 運動錶帶 焰藍色 M/L MUUU3"},{"s":"MUUV3FE/A","n":"41 N 運動錶帶 軍卡其 S/M MUUV3"},{"s":"MUUW3FE/A","n":"41 N 運動錶帶 軍卡其 M/L MUUW3"},{"s":"MUUX3FE/A","n":"41 N 運動錶帶 橙粉色 S/M MUUX3"},{"s":"MUUY3FE/A","n":"41 N 運動錶帶 橙粉色 M/L MUUY3"},{"s":"MUV03FE/A","n":"45 N 運動錶帶 純鉑金 S/M MUV03"},{"s":"MUV13FE/A","n":"45 N 運動錶帶 純鉑金 M/L MUV13"},{"s":"MUV33FE/A","n":"45 N 運動錶帶 午夜空 S/M MUV33"},{"s":"MUV53FE/A","n":"45 N 運動錶帶 午夜空 M/L MUV53"},{"s":"MUV63FE/A","n":"45 N 運動錶帶 沙漠石 S/M MUV63"},{"s":"MUV73FE/A","n":"45 N 運動錶帶 沙漠石 M/L MUV73"},{"s":"MUV83FE/A","n":"45 N 運動錶帶 焰藍色 S/M MUV83"},{"s":"MUV93FE/A","n":"45 N 運動錶帶 焰藍色 M/L MUV93"},{"s":"MUVC3FE/A","n":"45 N 運動錶帶 軍卡其 S/M S/M MUVC3"},{"s":"MUVD3FE/A","n":"45 N 運動錶帶 軍卡其 S/M M/L MUVD3"},{"s":"MUVE3FE/A","n":"45 N 運動錶帶 橙粉色 S/M MUVE3"},{"s":"MUVF3FE/A","n":"45 N 運動錶帶 橙粉色 M/L MUVF3"},{"s":"MUWA3TA/A","n":"Apple Pencil USB-C MUWA3"},{"s":"MT0H3TA/A","n":"AW USB-C 磁性快充線 1m MT0H3"},{"s":"MUQ93FE/A","n":"USB-C to Lightning 1m MUQ93"},{"s":"MUQW3FE/A","n":"Lightning to USB 1m MUQW3"},{"s":"MW2K3TA/A","n":"35W 雙 USB-C 充電器 MW2K3"},{"s":"MWN93FE/A","n":"iPhone 15 矽膠殼  粉紅色 MWN93"},{"s":"MWNA3FE/A","n":"iPhone 15 矽膠殼 日照色 MWNA3"},{"s":"MWNC3FE/A","n":"iPhone 15 矽膠殼 淡薄荷 MWNC3"},{"s":"MWND3FE/A","n":"iPhone 15 矽膠殼 淡藍色 MWND3"},{"s":"MWNE3FE/A","n":"iPhone 15+ 矽膠殼 粉紅色 MWNE3"},{"s":"MWNF3FE/A","n":"iPhone 15+ 矽膠殼 日照色 MWNF3"},{"s":"MWNG3FE/A","n":"iPhone 15+ 矽膠殼 淡薄荷 MWNG3"},{"s":"MWNH3FE/A","n":"iPhone 15+ 矽膠殼 淡藍色 MWNH3"},{"s":"MWNJ3FE/A","n":"iPhone 15 P 矽膠 粉紅色 MWNJ3"},{"s":"MWNK3FE/A","n":"iPhone 15 P 矽膠 日照色 MWNK3"},{"s":"MWNL3FE/A","n":"iPhone 15 P 矽膠 淡薄荷 MWNL3"},{"s":"MWNM3FE/A","n":"iPhone 15 P 矽膠 淡藍色 MWNM3"},{"s":"MWNN3FE/A","n":"iPhone 15 PM 矽膠 粉紅色 MWNN3"},{"s":"MWNP3FE/A","n":"iPhone 15 PM 矽膠 日照色 MWNP3"},{"s":"MWNQ3FE/A","n":"iPhone 15 PM 矽膠 淡薄荷 MWNQ3"},{"s":"MWNR3FE/A","n":"iPhone 15 PM 矽膠 淡藍色 MWNR3"},{"s":"MWVV3TA/A","n":"20W USB-C Adapter MWVV3"},{"s":"MUW23ZP/A","n":"Beats Solo4 WL 黑 MUW23"},{"s":"MUW33ZP/A","n":"Beats Solo4 WL 粉 MUW33"},{"s":"MUW43ZP/A","n":"Beats Solo4 WL 藍 MUW43"},{"s":"MW693FE/A","n":"擦拭布 MW693"},{"s":"MW2H3TA/A","n":"35W 雙 USB-C 小型充電器 MW2H3"},{"s":"MW2L3TA/A","n":"96W USB-C Power Adapter MW2L3"},{"s":"MW2M3TA/A","n":"140W USB-C Adapter MW2M3"},{"s":"MW5J3FE/A","n":"Thunderbolt 4 Pro 1.8m MW5J3"},{"s":"MWML3FE/A","n":"USB-C to Pencil 轉接器 MWML3"},{"s":"MUVW3TA/A","n":"Beats Solo Buds 黑 MUVW3"},{"s":"MUVX3TA/A","n":"Beats Solo Buds 紫 MUVX3"},{"s":"MUVY3TA/A","n":"Beats Solo Buds 灰 MUVY3"},{"s":"MUW03TA/A","n":"Beats Solo Buds 紅 MUW03"},{"s":"MX2D3TA/A","n":"Apple Pencil Pro MX2D3"},{"s":"MWR03TA/A","n":"Pro 11 M4 巧控鍵盤 白 MWR03"},{"s":"MWR23TA/A","n":"Pro 11 M4 巧控鍵盤 黑 MWR23"},{"s":"MWR43TA/A","n":"Pro 13 M4 巧控鍵盤 白 MWR43"},{"s":"MWR53TA/A","n":"Pro 13 M4 巧控鍵盤 黑 MWR53"},{"s":"MW443ZP/A","n":"Beats Pill 黑 MW443"},{"s":"MW463ZP/A","n":"Beats Pill 金 MW463"},{"s":"MWQW3ZP/A","n":"Beats Pill 紅 MWQW3"},{"s":"2000130264820","n":"[i]Care iPad Air 13 一年_2050"},{"s":"2000130264837","n":"[i]Care iPad Air 13 兩年_3130"},{"s":"2000130264844","n":"[i]Care iPad Pro 11 一年_2870"},{"s":"2000130264851","n":"[i]Care iPad Pro 11 兩年_4350"},{"s":"2000130264868","n":"[i]Care iPad Pro 13 一年_3280"},{"s":"2000130264875","n":"[i]Care iPad Pro 13 兩年_5260"},{"s":"MW2P3FE/A","n":"Lightning Digital AV MW2P3"},{"s":"MW2Q3FE/A","n":"USB-C to 3.5mm 孔 轉接器 MW2Q3"},{"s":"MW2R3ZA/A","n":"USB-C to Lightning 2m MW2R3"},{"s":"MW5H3FE/A","n":"Thunderbolt 4 Pro 3m MW5H3"},{"s":"MW5M3FE/A","n":"USB-C Digital AV MW5M3"},{"s":"MW653TA/A","n":"USB-C to SD 讀卡機 MW653"},{"s":"MX5J3FE/A","n":"Lightning to USB3 Camera MX5J3"},{"s":"MWTY3FE/A","n":"EarPods For Lightning MWTY3"},{"s":"MWU53FE/A","n":"EarPods For 3.5mm MWU53"},{"s":"MTJT3TA/A","n":"HomePod mini 午夜 MTJT3"},{"s":"MW493FE/A","n":"USB-C Charge Cable (1m) MW493"},{"s":"MW5L3FE/A","n":"USB-C to USB Adapter MW5L3"},{"s":"MXN53TA/A","n":"70W USB-C Power Adapter MXN53"},{"s":"MYH93FE/A","n":"USB-C to Thunderbolt 2 MYH93"},{"s":"MYQT3FE/A","n":"USB-C Charge Cable (2m) MYQT3"},{"s":"MYQY3ZP/A","n":"EarPods for USB-C MYQY3"},{"s":"MW5G3TA/A","n":"Apple TV Siri 遙控器 MW5G3"},{"s":"MYE73ZP/A","n":"iPhone 16 128GB 黑 MYE73"},{"s":"MYE93ZP/A","n":"iPhone 16 128GB 白 MYE93"},{"s":"MYEA3ZP/A","n":"iPhone 16 128GB 粉 MYEA3"},{"s":"MYEC3ZP/A","n":"iPhone 16 128GB 藍 MYEC3"},{"s":"MYED3ZP/A","n":"iPhone 16 128GB 綠 MYED3"},{"s":"MXVU3ZP/A","n":"iPhone 16+ 128GB 黑 MXVU3"},{"s":"MXVV3ZP/A","n":"iPhone 16+ 128GB 白 MXVV3"},{"s":"MXVW3ZP/A","n":"iPhone 16+ 128GB 粉 MXVW3"},{"s":"MXVX3ZP/A","n":"iPhone 16+ 128GB 藍 MXVX3"},{"s":"MXVY3ZP/A","n":"iPhone 16+ 128GB 綠 MXVY3"},{"s":"MXWN3ZP/A","n":"iPhone 16+ 256GB 黑 MXWN3"},{"s":"MXWV3ZP/A","n":"iPhone 16+ 256GB 白 MXWV3"},{"s":"MXY13ZP/A","n":"iPhone 16+ 256GB 粉 MXY13"},{"s":"MXY23ZP/A","n":"iPhone 16+ 256GB 藍 MXY23"},{"s":"MXY53ZP/A","n":"iPhone 16+ 256GB 綠 MXY53"},{"s":"MCFC4PA/A","n":"Beats iPhone 16 磁吸殼 午夜黑"},{"s":"MCFE4PA/A","n":"Beats iPhone 16 磁吸殼 波濤藍"},{"s":"MCFD4PA/A","n":"Beats iPhone 16 磁吸殼 頂峰石"},{"s":"MCFF4PA/A","n":"Beats iPhone 16 磁吸殼 夕陽紫"},{"s":"MCFG4PA/A","n":"Beats iPhone 16+ 磁吸殼 午夜黑"},{"s":"MCFJ4PA/A","n":"Beats iPhone 16+ 磁吸殼 波濤藍"},{"s":"MCFH4PA/A","n":"Beats iPhone 16+ 磁吸殼 頂峰石"},{"s":"MCFK4PA/A","n":"Beats iPhone 16+ 磁吸殼 夕陽紫"},{"s":"MCFL4PA/A","n":"Beats iPhone 16P 磁吸殼 午夜黑"},{"s":"MCFN4PA/A","n":"Beats iPhone 16P 磁吸殼 波濤藍"},{"s":"MCFM4PA/A","n":"Beats iPhone 16P 磁吸殼 頂峰石"},{"s":"MCFP4PA/A","n":"Beats iPhone 16P 磁吸殼 夕陽紫"},{"s":"MCFQ4PA/A","n":"Beats iPhone 16M 磁吸殼 午夜黑"},{"s":"MCFT4PA/A","n":"Beats iPhone 16M 磁吸殼 波濤藍"},{"s":"MCFR4PA/A","n":"Beats iPhone 16M 磁吸殼 頂峰石"},{"s":"MCFU4PA/A","n":"Beats iPhone 16M 磁吸殼 夕陽紫"},{"s":"MA6A4FE/A","n":"iPhone 16 透明殼 MA6A4"},{"s":"MA7D4FE/A","n":"iPhone 16+ 透明殼 MA7D4"},{"s":"MA7E4FE/A","n":"iPhone 16 Pro 透明殼 MA7E4"},{"s":"MA7F4FE/A","n":"iPhone 16 PM 透明殼 MA7F4"},{"s":"MYY13FE/A","n":"iPhone 16 矽膠殼 黑色 MYY13"},{"s":"MYY53FE/A","n":"iPhone 16 矽膠殼 吊鐘 MYY53"},{"s":"MYY83FE/A","n":"iPhone 16 矽膠殼 湖綠 MYY83"},{"s":"MYY43FE/A","n":"iPhone 16 矽膠殼 梅李 MYY43"},{"s":"MYY73FE/A","n":"iPhone 16 矽膠殼 楊桃 MYY73"},{"s":"MYY33FE/A","n":"iPhone 16 矽膠殼 灰石 MYY33"},{"s":"MYY63FE/A","n":"iPhone 16 矽膠殼 湛藍 MYY63"},{"s":"MYY93FE/A","n":"iPhone 16+ 矽膠殼 黑色 MYY93"},{"s":"MYYA3FE/A","n":"iPhone 16+ 矽膠殼 單寧 MYYA3"},{"s":"MYYE3FE/A","n":"iPhone 16+ 矽膠殼 吊鐘 MYYE3"},{"s":"MYYH3FE/A","n":"iPhone 16+ 矽膠殼 湖綠 MYYH3"},{"s":"MYYD3FE/A","n":"iPhone 16+ 矽膠殼 梅李 MYYD3"},{"s":"MYYG3FE/A","n":"iPhone 16+ 矽膠殼 楊桃 MYYG3"},{"s":"MYYC3FE/A","n":"iPhone 16+ 矽膠殼 灰石 MYYC3"},{"s":"MYYF3FE/A","n":"iPhone 16+ 矽膠殼 湛藍 MYYF3"},{"s":"MYYJ3FE/A","n":"iPhone 16P 矽膠殼 黑色 MYYJ3"},{"s":"MYYK3FE/A","n":"iPhone 16P 矽膠殼 單寧 MYYK3"},{"s":"MYYN3FE/A","n":"iPhone 16P 矽膠殼 吊鐘 MYYN3"},{"s":"MYYM3FE/A","n":"iPhone 16P 矽膠殼 梅李 MYYM3"},{"s":"MYYQ3FE/A","n":"iPhone 16P 矽膠殼 楊桃 MYYQ3"},{"s":"MYYL3FE/A","n":"iPhone 16P 矽膠殼 灰石 MYYL3"},{"s":"MYYT3FE/A","n":"iPhone 16PM 矽膠殼 黑色 MYYT3"},{"s":"MYYU3FE/A","n":"iPhone 16PM 矽膠殼 單寧 MYYU3"},{"s":"MYYX3FE/A","n":"iPhone 16PM 矽膠殼 吊鐘 MYYX3"},{"s":"MA7V4FE/A","n":"iPhone 16PM 矽膠殼 湖綠 MA7V4"},{"s":"MYYW3FE/A","n":"iPhone 16PM 矽膠殼 梅李 MYYW3"},{"s":"MA7U4FE/A","n":"iPhone 16PM 矽膠殼 楊桃 MA7U4"},{"s":"MYYV3FE/A","n":"iPhone 16PM 矽膠殼 灰石 MYYV3"},{"s":"MAX94FE/A","n":"40mm 運動錶帶 黑色 S/M MAX94"},{"s":"MAXA4FE/A","n":"40mm 運動錶帶 黑色 M/L MAXA4"},{"s":"MAXC4FE/A","n":"40mm 運動錶帶 胭脂粉 S/M MAXC4"},{"s":"MAXD4FE/A","n":"40mm 運動錶帶 胭脂粉 M/L MAXD4"},{"s":"MAXF4FE/A","n":"40mm 運動錶帶 灰石色 S/M MAXF4"},{"s":"MAXG4FE/A","n":"40mm 運動錶帶 灰石色 M/L MAXG4"},{"s":"MXLG3FE/A","n":"42mm 運動錶帶 石灰色 S/M MXLG3"},{"s":"MXLH3FE/A","n":"42mm 運動錶帶 石灰色 M/L MXLH3"},{"s":"MXLJ3FE/A","n":"42mm 運動錶帶 黑色 S/M MXLJ3"},{"s":"MXLK3FE/A","n":"42mm 運動錶帶 黑色 M/L MXLK3"},{"s":"MXLL3FE/A","n":"42mm 運動錶帶 星光色 S/M MXLL3"},{"s":"MXLM3FE/A","n":"42mm 運動錶帶 星光色 M/L MXLM3"},{"s":"MXLN3FE/A","n":"42mm 運動錶帶 胭脂粉 S/M MXLN3"},{"s":"MXLP3FE/A","n":"42mm 運動錶帶 胭脂粉 M/L MXLP3"},{"s":"MXLX3FE/A","n":"46mm 運動錶帶 石灰色 S/M MXLX3"},{"s":"MXLY3FE/A","n":"46mm 運動錶帶 石灰色 M/L MXLY3"},{"s":"MXM23FE/A","n":"46mm 運動錶帶 黑色 S/M MXM23"},{"s":"MXM43FE/A","n":"46mm 運動錶帶 黑色 M/L MXM43"},{"s":"MXM53FE/A","n":"46mm 運動錶帶 黑色 XL MXM53"},{"s":"MXM63FE/A","n":"46mm 運動錶帶 星光色 S/M MXM63"},{"s":"MXM73FE/A","n":"46mm 運動錶帶 星光色 M/L MXM73"},{"s":"MXM83FE/A","n":"46mm 運動錶帶 胭脂粉 S/M MXM83"},{"s":"MXM93FE/A","n":"46mm 運動錶帶 胭脂粉 M/L MXM93"},{"s":"MXTL3FE/A","n":"49mm 原鈦海洋錶帶 黑色 MXTL3"},{"s":"MYG03FE/A","n":"46mm 運動錶帶 午夜色 S/M MYG03"},{"s":"MYG13FE/A","n":"46mm 運動錶帶 午夜色 M/L MYG13"},{"s":"MYJ33FE/A","n":"40mm 運動錶帶 星光色 S/M MYJ33"},{"s":"MYJ43FE/A","n":"40mm 運動錶帶 星光色 M/L MYJ43"},{"s":"MYJ53FE/A","n":"40mm 運動錶帶 午夜色 S/M MYJ53"},{"s":"MYJ63FE/A","n":"40mm 運動錶帶 午夜色 M/L MYJ63"},{"s":"MYPD3FE/A","n":"49mm 黑鈦海洋錶帶 黑色 MYPD3"},{"s":"MXP63TA/A","n":"AirPods 第四代 MXP63"},{"s":"MXP93TA/A","n":"AirPods 第四代 降噪 MXP93"},{"s":"MWW43TA/A","n":"AirPods Max 午夜 MWW43"},{"s":"MWW53TA/A","n":"AirPods Max 星光 MWW53"},{"s":"MWW63TA/A","n":"AirPods Max 藍 MWW63"},{"s":"MWW73TA/A","n":"AirPods Max 橙 MWW73"},{"s":"MWW83TA/A","n":"AirPods Max 紫 MWW83"},{"s":"2000130280080","n":"[i]Care AirPods 4/4降 兩年_960"},{"s":"SNGN2TA/A","n":"AC+ for iPad mini A17 P SNGN2"},{"s":"MXN63TA/A","n":"iPad mini WF 128G 太空灰 MXN63"},{"s":"MXN73TA/A","n":"iPad mini WF 128G 藍 MXN73"},{"s":"MXN83TA/A","n":"iPad mini WF 128G 星光 MXN83"},{"s":"MXN93TA/A","n":"iPad mini WF 128G 紫 MXN93"},{"s":"MXNA3TA/A","n":"iPad mini WF 256G 太空灰 MXNA3"},{"s":"MXNC3TA/A","n":"iPad mini WF 256G 藍 MXNC3"},{"s":"MXND3TA/A","n":"iPad mini WF 256G 星光 MXND3"},{"s":"MXNE3TA/A","n":"iPad mini WF 256G 紫 MXNE3"},{"s":"MXPN3TA/A","n":"iPad mini 5G 128G 太空灰 MXPN3"},{"s":"MXPP3TA/A","n":"iPad mini 5G 128G 藍 MXPP3"},{"s":"MXPQ3TA/A","n":"iPad mini 5G 128G 星光 MXPQ3"},{"s":"MXPR3TA/A","n":"iPad mini 5G 128G 紫 MXPR3"},{"s":"MXPT3TA/A","n":"iPad mini 5G 256G 太空灰 MXPT3"},{"s":"MXPW3TA/A","n":"iPad mini 5G 256G 藍 MXPW3"},{"s":"MXPX3TA/A","n":"iPad mini 5G 256G 星光 MXPX3"},{"s":"MXPY3TA/A","n":"iPad mini 5G 256G 紫 MXPY3"},{"s":"MYGY3TA/A","n":"iPad mini WF 512G 太空灰 MYGY3"},{"s":"MYH13TA/A","n":"iPad mini WF 512G 藍 MYH13"},{"s":"MYH23TA/A","n":"iPad mini WF 512G 星光 MYH23"},{"s":"MYH33TA/A","n":"iPad mini WF 512G 紫 MYH33"},{"s":"MYHC3TA/A","n":"iPad mini 5G 512G 太空灰 MYHC3"},{"s":"MYHD3TA/A","n":"iPad mini 5G 512G 藍 MYHD3"},{"s":"MYHE3TA/A","n":"iPad mini 5G 512G 星光 MYHE3"},{"s":"MYHF3TA/A","n":"iPad mini 5G 512G 紫 MYHF3"},{"s":"MWUC3TA/A","n":"M4 iMac 24 8核 256 銀 MWUC3"},{"s":"MWUE3TA/A","n":"M4 iMac 24 8核 256 綠 MWUE3"},{"s":"MWUF3TA/A","n":"M4 iMac 24 8核 256 藍 MWUF3"},{"s":"MWUG3TA/A","n":"M4 iMac 24 8核 256 粉 MWUG3"},{"s":"MWUU3TA/A","n":"M4 iMac 24 10C 16 256 銀 MWUU3"},{"s":"MWUY3TA/A","n":"M4 iMac 24 10C 16 256 綠 MWUY3"},{"s":"MWV13TA/A","n":"M4 iMac 24 10C 16 256 藍 MWV13"},{"s":"MWV43TA/A","n":"M4 iMac 24 10C 16 256 粉 MWV43"},{"s":"MD3H4TA/A","n":"M4 iMac 24 10 16 256NT銀 MD3H4"},{"s":"MWUV3TA/A","n":"M4 iMac 24 10C 16 512 銀 MWUV3"},{"s":"MWV03TA/A","n":"M4 iMac 24 10C 16 512 綠 MWV03"},{"s":"MWV33TA/A","n":"M4 iMac 24 10C 16 512 藍 MWV33"},{"s":"MWV53TA/A","n":"M4 iMac 24 10C 16 512 粉 MWV53"},{"s":"MCR24TA/A","n":"M4 iMac 24 10C 24 512 銀 MCR24"},{"s":"MD2Q4TA/A","n":"M4 iMac 24 10C 24 512 綠 MD2Q4"},{"s":"MD2T4TA/A","n":"M4 iMac 24 10C 24 512 藍 MD2T4"},{"s":"MD2U4TA/A","n":"M4 iMac 24 10C 24 512 粉 MD2U4"},{"s":"MXCK3TA/A","n":"Magic Keyboard Touch ID MXCK3"},{"s":"MXCL3TA/A","n":"Magic Keyboard MXCL3"},{"s":"MXK53TA/A","n":"Magic Mouse 白 MXK53"},{"s":"MXK63TA/A","n":"Magic Mouse 黑 MXK63"},{"s":"MXK73TA/A","n":"Magic Keyboard 數 ID 白 MXK73"},{"s":"MXK83TA/A","n":"Magic Keyboard 數 ID 黑 MXK83"},{"s":"MXK93TA/A","n":"Magic Trackpad 白 MXK93"},{"s":"MXKA3TA/A","n":"Magic Trackpad 黑 MXKA3"},{"s":"SR1A2TA/A","n":"AC+ for iMac M4 SR1A2"},{"s":"MU9D3TA/A","n":"M4 Mac mini 10核 16 256 MU9D3"},{"s":"MU9E3TA/A","n":"M4 Mac mini 10核 16 512 MU9E3"},{"s":"MCYT4TA/A","n":"M4 Mac mini 10核 24 512 MCYT4"},{"s":"MCX44TA/A","n":"M4P Mac mini 16核 24 512 MCX44"},{"s":"MC9C4FE/A","n":"Thunderbolt 5 Pro 1m MC9C4"},{"s":"SR1C2TA/A","n":"AC+ for Mac mini M4 SR1C2"},{"s":"MX2E3TA/A","n":"M4P MBP 14 512GB 銀 MX2E3"},{"s":"MX2H3TA/A","n":"M4P MBP 14 512GB 黑 MX2H3"},{"s":"MX2J3TA/A","n":"M4P MBP 14 1TB 黑 MX2J3"},{"s":"MX2F3TA/A","n":"M4P MBP 14 1TB 銀 MX2F3"},{"s":"MX2G3TA/A","n":"M4M MBP 14 1TB 銀 MX2G3"},{"s":"MX2K3TA/A","n":"M4M MBP 14 1TB 黑 MX2K3"},{"s":"MW613FE/A","n":"USB-C to MagSafe 3 2m MW613"},{"s":"MX763FE/A","n":"Apple Pencil 替換筆尖 MX763"},{"s":"MWK93FE/A","n":"iPad Air 13 聰穎雙夾 灰 MWK93"},{"s":"MXCJ3TA/A","n":"Magic Keyboard 數 MXCJ3"},{"s":"MXN43TA/A","n":"Apple Pencil 2代 MXN43"},{"s":"MW6A3TA/A","n":"AW 磁性充電連接線 1m MW6A3"},{"s":"MD3N4FE/A","n":"iPhone 16e 矽膠殼 黑 MD3N4"},{"s":"MD3P4FE/A","n":"iPhone 16e 矽膠殼 白 MD3P4"},{"s":"MD3Q4FE/A","n":"iPhone 16e 矽膠殼 冬藍 MD3Q4"},{"s":"MD3W4FE/A","n":"iPhone 16e 矽膠殼 吊鐘花 MD3W4"},{"s":"MD3X4FE/A","n":"iPhone 16e 矽膠殼 湖綠 MD3X4"},{"s":"MD1Q4ZP/A","n":"iPhone 16e 128GB 黑 MD1Q4"},{"s":"MD1R4ZP/A","n":"iPhone 16e 128GB 白 MD1R4"},{"s":"MD1T4ZP/A","n":"iPhone 16e 256GB 黑 MD1T4"},{"s":"MD1W4ZP/A","n":"iPhone 16e 256GB 白 MD1W4"},{"s":"MD1X4ZP/A","n":"iPhone 16e 512GB 黑 MD1X4"},{"s":"MD274ZP/A","n":"iPhone 16e 512GB 白 MD274"},{"s":"MD3Y4TA/A","n":"iPad 11 WiFi 128 銀 MD3Y4"},{"s":"MD4A4TA/A","n":"iPad 11 WiFi 128 藍 MD4A4"},{"s":"MD4D4TA/A","n":"iPad 11 WiFi 128 黃 MD4D4"},{"s":"MD4E4TA/A","n":"iPad 11 WiFi 128 粉 MD4E4"},{"s":"MD4G4TA/A","n":"iPad 11 WiFi 256 銀 MD4G4"},{"s":"MD4H4TA/A","n":"iPad 11 WiFi 256 藍 MD4H4"},{"s":"MD4J4TA/A","n":"iPad 11 WiFi 256 黃 MD4J4"},{"s":"MD4P4TA/A","n":"iPad 11 WiFi 256 粉 MD4P4"},{"s":"MD4Q4TA/A","n":"iPad 11 WiFi 512 銀 MD4Q4"},{"s":"MD4Y4TA/A","n":"iPad 11 WiFi 512 藍 MD4Y4"},{"s":"MD5A4TA/A","n":"iPad 11 WiFi 512 黃 MD5A4"},{"s":"MD5C4TA/A","n":"iPad 11 WiFi 512 粉 MD5C4"},{"s":"MD7F4TA/A","n":"iPad 11 CL 128GB 銀 MD7F4"},{"s":"MD7G4TA/A","n":"iPad 11 CL 128GB 藍 MD7G4"},{"s":"MD7H4TA/A","n":"iPad 11 CL 128GB 黃 MD7H4"},{"s":"MD7J4TA/A","n":"iPad 11 CL 128GB 粉 MD7J4"},{"s":"MD7K4TA/A","n":"iPad 11 CL 256GB 銀 MD7K4"},{"s":"MD7L4TA/A","n":"iPad 11 CL 256GB 藍 MD7L4"},{"s":"MD7M4TA/A","n":"iPad 11 CL 256GB 黃 MD7M4"},{"s":"MD7N4TA/A","n":"iPad 11 CL 256GB 粉 MD7N4"},{"s":"MD7P4TA/A","n":"iPad 11 CL 512GB 銀 MD7P4"},{"s":"MD7Q4TA/A","n":"iPad 11 CL 512GB 藍 MD7Q4"},{"s":"MD7R4TA/A","n":"iPad 11 CL 512GB 黃 MD7R4"},{"s":"MD7T4TA/A","n":"iPad 11 CL 512GB 粉 MD7T4"},{"s":"MC9W4TA/A","n":"iPad Air 11 WF 128 灰 MC9W4"},{"s":"MC9X4TA/A","n":"iPad Air 11 WF 128 藍 MC9X4"},{"s":"MC9Y4TA/A","n":"iPad Air 11 WF 128 星 MC9Y4"},{"s":"MCA04TA/A","n":"iPad Air 11 WF 128 紫 MCA04"},{"s":"MCA14TA/A","n":"iPad Air 11 WF 256 灰 MCA14"},{"s":"MCA34TA/A","n":"iPad Air 11 WF 256 藍 MCA34"},{"s":"MCA44TA/A","n":"iPad Air 11 WF 256 星 MCA44"},{"s":"MCA64TA/A","n":"iPad Air 11 WF 256 紫 MCA64"},{"s":"MCA74TA/A","n":"iPad Air 11 WF 512 灰 MCA74"},{"s":"MCA94TA/A","n":"iPad Air 11 WF 512 藍 MCA94"},{"s":"MCAA4TA/A","n":"iPad Air 11 WF 512 星 MCAA4"},{"s":"MCAE4TA/A","n":"iPad Air 11 WF 512 紫 MCAE4"},{"s":"MCAH4TA/A","n":"iPad Air 11 WF 1TB 灰 MCAH4"},{"s":"MCAJ4TA/A","n":"iPad Air 11 WF 1TB 藍 MCAJ4"},{"s":"MCAQ4TA/A","n":"iPad Air 11 WF 1TB 星 MCAQ4"},{"s":"MCAU4TA/A","n":"iPad Air 11 WF 1TB 紫 MCAU4"},{"s":"MCFV4TA/A","n":"iPad Air 11 CL 128 灰 MCFV4"},{"s":"MCFW4TA/A","n":"iPad Air 11 CL 128 藍 MCFW4"},{"s":"MCFX4TA/A","n":"iPad Air 11 CL 128 星 MCFX4"},{"s":"MCFY4TA/A","n":"iPad Air 11 CL 128 紫 MCFY4"},{"s":"MCG04TA/A","n":"iPad Air 11 CL 256 灰 MCG04"},{"s":"MCG14TA/A","n":"iPad Air 11 CL 256 藍 MCG14"},{"s":"MCG24TA/A","n":"iPad Air 11 CL 256 星 MCG24"},{"s":"MCG34TA/A","n":"iPad Air 11 CL 256 紫 MCG34"},{"s":"MCG44TA/A","n":"iPad Air 11 CL 512 灰 MCG44"},{"s":"MCG54TA/A","n":"iPad Air 11 CL 512 藍 MCG54"},{"s":"MCG64TA/A","n":"iPad Air 11 CL 512 星 MCG64"},{"s":"MCG74TA/A","n":"iPad Air 11 CL 512 紫 MCG74"},{"s":"MCG84TA/A","n":"iPad Air 11 CL 1TB 灰 MCG84"},{"s":"MCG94TA/A","n":"iPad Air 11 CL 1TB 藍 MCG94"},{"s":"MCGA4TA/A","n":"iPad Air 11 CL 1TB 星 MCGA4"},{"s":"MCGC4TA/A","n":"iPad Air 11 CL 1TB 紫 MCGC4"},{"s":"MCJ14TA/A","n":"iPad Air 13 CL 128 灰 MCJ14"},{"s":"MCJ24TA/A","n":"iPad Air 13 CL 128 藍 MCJ24"},{"s":"MCJ34TA/A","n":"iPad Air 13 CL 128 星 MCJ34"},{"s":"MCJ44TA/A","n":"iPad Air 13 CL 128 紫 MCJ44"},{"s":"MCJ54TA/A","n":"iPad Air 13 CL 256 灰 MCJ54"},{"s":"MCJ64TA/A","n":"iPad Air 13 CL 256 藍 MCJ64"},{"s":"MCJ74TA/A","n":"iPad Air 13 CL 256 星 MCJ74"},{"s":"MCJ84TA/A","n":"iPad Air 13 CL 256 紫 MCJ84"},{"s":"MCJ94TA/A","n":"iPad Air 13 CL 512 灰 MCJ94"},{"s":"MCJA4TA/A","n":"iPad Air 13 CL 512 藍 MCJA4"},{"s":"MCJC4TA/A","n":"iPad Air 13 CL 512 星 MCJC4"},{"s":"MCJD4TA/A","n":"iPad Air 13 CL 512 紫 MCJD4"},{"s":"MCJE4TA/A","n":"iPad Air 13 CL 1TB 灰 MCJE4"},{"s":"MCJF4TA/A","n":"iPad Air 13 CL 1TB 藍 MCJF4"},{"s":"MCJG4TA/A","n":"iPad Air 13 CL 1TB 星 MCJG4"},{"s":"MCJH4TA/A","n":"iPad Air 13 CL 1TB 紫 MCJH4"},{"s":"MCNH4TA/A","n":"iPad Air 13 WF 128 灰 MCNH4"},{"s":"MCNJ4TA/A","n":"iPad Air 13 WF 128 藍 MCNJ4"},{"s":"MCNK4TA/A","n":"iPad Air 13 WF 128 星 MCNK4"},{"s":"MCNL4TA/A","n":"iPad Air 13 WF 128 紫 MCNL4"},{"s":"MCNN4TA/A","n":"iPad Air 13 WF 256 灰 MCNN4"},{"s":"MCNP4TA/A","n":"iPad Air 13 WF 256 藍 MCNP4"},{"s":"MCNQ4TA/A","n":"iPad Air 13 WF 256 星 MCNQ4"},{"s":"MCNR4TA/A","n":"iPad Air 13 WF 256 紫 MCNR4"},{"s":"MCNT4TA/A","n":"iPad Air 13 WF 512 灰 MCNT4"},{"s":"MCNW4TA/A","n":"iPad Air 13 WF 512 藍 MCNW4"},{"s":"MCNX4TA/A","n":"iPad Air 13 WF 512 星 MCNX4"},{"s":"MCNY4TA/A","n":"iPad Air 13 WF 512 紫 MCNY4"},{"s":"MCQ04TA/A","n":"iPad Air 13 WF 1TB 灰 MCQ04"},{"s":"MCQ14TA/A","n":"iPad Air 13 WF 1TB 藍 MCQ14"},{"s":"MCQ24TA/A","n":"iPad Air 13 WF 1TB 星 MCQ24"},{"s":"MCQ34TA/A","n":"iPad Air 13 WF 1TB 紫 MCQ34"},{"s":"MDFV4TA/A","n":"Air 11 M2/3 巧控鍵盤 白 MDFV4"},{"s":"MDFW4TA/A","n":"Air 13 M2/3 巧控鍵盤 白 MDFW4"},{"s":"SUYD2TA/A","n":"AC+ for iPad A16 SUYD2"},{"s":"STKT2TA/A","n":"AC+ for Mac Studio M4 STKT2"},{"s":"SUWE2TA/A","n":"AC+ for MBA 13 M4 SUWE2"},{"s":"SUWF2TA/A","n":"AC+ for MBA 15 M4 SUWF2"},{"s":"MU963TA/A","n":"Mac Studio M4M 512GB MU963"},{"s":"MU973TA/A","n":"Mac Studio M3U 1TB MU973"},{"s":"MDV84FE/A","n":"USB-C to 3.5 mm Cable MDV84"},{"s":"MDEW4TA/A","n":"HomePod 午夜 MDEW4"},{"s":"MDEY4TA/A","n":"HomePod 白色 MDEY4"},{"s":"MYJF3TA/A","n":"Studio Display 標準斜高 MYJF3"},{"s":"MYJG3TA/A","n":"Studio Display 標準斜 MYJG3"},{"s":"MFHP4TA/A","n":"AirPods Pro 3 MFHP4"},{"s":"MG6J4ZP/A","n":"iPhone 17 256G 黑 MG6J4"},{"s":"MG6K4ZP/A","n":"iPhone 17 256G 白 MG6K4"},{"s":"MG6L4ZP/A","n":"iPhone 17 256G 霧藍 MG6L4"},{"s":"MG6M4ZP/A","n":"iPhone 17 256G 薰衣紫 MG6M4"},{"s":"MG6N4ZP/A","n":"iPhone 17 256G 鼠尾綠 MG6N4"},{"s":"MG6P4ZP/A","n":"iPhone 17 512G 黑 MG6P4"},{"s":"MG6Q4ZP/A","n":"iPhone 17 512G 白 MG6Q4"},{"s":"MG6T4ZP/A","n":"iPhone 17 512G 霧藍 MG6T4"},{"s":"MG6U4ZP/A","n":"iPhone 17 512G 薰衣紫 MG6U4"},{"s":"MG6V4ZP/A","n":"iPhone 17 512G 鼠尾綠 MG6V4"},{"s":"MG2L4ZP/A","n":"iPhone Air 256G 太空黑 MG2L4"},{"s":"MG2M4ZP/A","n":"iPhone Air 256G 雲白 MG2M4"},{"s":"MG2N4ZP/A","n":"iPhone Air 256G 淺金 MG2N4"},{"s":"MG2P4ZP/A","n":"iPhone Air 256G 天藍 MG2P4"},{"s":"MG2Q4ZP/A","n":"iPhone Air 512G 太空黑 MG2Q4"},{"s":"MG2T4ZP/A","n":"iPhone Air 512G 雲白 MG2T4"},{"s":"MG2U4ZP/A","n":"iPhone Air 512G 淺金 MG2U4"},{"s":"MG2V4ZP/A","n":"iPhone Air 512G 天藍 MG2V4"},{"s":"MG2W4ZP/A","n":"iPhone Air 1T 太空黑 MG2W4"},{"s":"MG2X4ZP/A","n":"iPhone Air 1T 雲白 MG2X4"},{"s":"MG2Y4ZP/A","n":"iPhone Air 1T 淺金 MG2Y4"},{"s":"MG304ZP/A","n":"iPhone Air 1T 天藍 MG304"},{"s":"MG8G4ZP/A","n":"iPhone 17 Pro 256G 銀 MG8G4"},{"s":"MG8H4ZP/A","n":"iPhone 17 Pro 256G 橙 MG8H4"},{"s":"MG8J4ZP/A","n":"iPhone 17 Pro 256G 藏藍 MG8J4"},{"s":"MG8K4ZP/A","n":"iPhone 17 Pro 512G 銀 MG8K4"},{"s":"MG8M4ZP/A","n":"iPhone 17 Pro 512G 橙 MG8M4"},{"s":"MG8N4ZP/A","n":"iPhone 17 Pro 512G 藏藍 MG8N4"},{"s":"MG8P4ZP/A","n":"iPhone 17 Pro 1T 銀 MG8P4"},{"s":"MG8Q4ZP/A","n":"iPhone 17 Pro 1T 橙 MG8Q4"},{"s":"MG8R4ZP/A","n":"iPhone 17 Pro 1T 藏藍 MG8R4"},{"s":"MFYM4ZP/A","n":"iPhone 17 PM 256G 銀 MFYM4"},{"s":"MFYN4ZP/A","n":"iPhone 17 PM 256G 橙 MFYN4"},{"s":"MFYP4ZP/A","n":"iPhone 17 PM 256G 藏藍 MFYP4"},{"s":"MFYQ4ZP/A","n":"iPhone 17 PM 512G 銀 MFYQ4"},{"s":"MFYT4ZP/A","n":"iPhone 17 PM 512G 橙 MFYT4"},{"s":"MFYU4ZP/A","n":"iPhone 17 PM 512G 藏藍 MFYU4"},{"s":"MFYV4ZP/A","n":"iPhone 17 PM 1T 銀 MFYV4"},{"s":"MFYW4ZP/A","n":"iPhone 17 PM 1T 橙 MFYW4"},{"s":"MFYX4ZP/A","n":"iPhone 17 PM 1T 藏藍 MFYX4"},{"s":"MFYY4ZP/A","n":"iPhone 17 PM 2T 銀 MFYY4"},{"s":"MG004ZP/A","n":"iPhone 17 PM 2T 橙 MG004"},{"s":"MG014ZP/A","n":"iPhone 17 PM 2T 藏藍 MG014"},{"s":"MEH34TA/A","n":"AW SE 40 星鋁/星帶 S MEH34"},{"s":"MEH54TA/A","n":"AW SE 40 星鋁/星帶 L MEH54"},{"s":"MEH94TA/A","n":"AW SE 40 午鋁/午帶 S MEH94"},{"s":"MEHC4TA/A","n":"AW SE 40 午鋁/午帶 L MEHC4"},{"s":"MEHG4TA/A","n":"AW SE 44 星鋁/星帶 S MEHG4"},{"s":"MEHJ4TA/A","n":"AW SE 44 星鋁/星帶 L MEHJ4"},{"s":"MEHN4TA/A","n":"AW SE 44 午鋁/午帶 S MEHN4"},{"s":"MEHQ4TA/A","n":"AW SE 44 午鋁/午帶 L MEHQ4"},{"s":"MEP64TA/A","n":"AW SE CL 40 星鋁/星帶 S MEP64"},{"s":"MEP74TA/A","n":"AW SE CL 40 星鋁/星帶 L MEP74"},{"s":"MEP94TA/A","n":"AW SE CL 40 午鋁/午帶 S MEP94"},{"s":"MEPC4TA/A","n":"AW SE CL 40 午鋁/午帶 L MEPC4"},{"s":"MEPE4TA/A","n":"AW SE CL 44 星鋁/星帶 S MEPE4"},{"s":"MEPF4TA/A","n":"AW SE CL 44 星鋁/星帶 L MEPF4"},{"s":"MEPH4TA/A","n":"AW SE CL 44 午鋁/午帶 S MEPH4"},{"s":"MEPJ4TA/A","n":"AW SE CL 44 午鋁/午帶 L MEPJ4"},{"s":"MEQT4TA/A","n":"AW S11 42 黑鋁/黑帶 S MEQT4"},{"s":"MEQU4TA/A","n":"AW S11 42 黑鋁/黑帶 L MEQU4"},{"s":"MEQW4TA/A","n":"AW S11 42 灰鋁/黑帶 S MEQW4"},{"s":"MEQX4TA/A","n":"AW S11 42 灰鋁/黑帶 L MEQX4"},{"s":"MEU04TA/A","n":"AW S11 42 金鋁/粉帶 S MEU04"},{"s":"MEU44TA/A","n":"AW S11 42 金鋁/粉帶 L MEU44"},{"s":"MEU64TA/A","n":"AW S11 42 銀鋁/紫帶 S MEU64"},{"s":"MEU74TA/A","n":"AW S11 42 銀鋁/紫帶 L MEU74"},{"s":"MEUW4TA/A","n":"AW S11 46 黑鋁/黑帶 S MEUW4"},{"s":"MEUX4TA/A","n":"AW S11 46 黑鋁/黑帶 L MEUX4"},{"s":"MEV04TA/A","n":"AW S11 46 灰鋁/黑帶 S MEV04"},{"s":"MEV44TA/A","n":"AW S11 46 灰鋁/黑帶 L MEV44"},{"s":"MEV64TA/A","n":"AW S11 46 金鋁/粉帶 S MEV64"},{"s":"MEV74TA/A","n":"AW S11 46 金鋁/粉帶 L MEV74"},{"s":"MEV94TA/A","n":"AW S11 46 銀鋁/紫帶 S MEV94"},{"s":"MEVA4TA/A","n":"AW S11 46 銀鋁/紫帶 L MEVA4"},{"s":"MF834TA/A","n":"AW S11 CL 42 黑鋁/黑帶 S MF834"},{"s":"MF854TA/A","n":"AW S11 CL 42 黑鋁/黑帶 L MF854"},{"s":"MF8A4TA/A","n":"AW S11 CL 42 灰鋁/黑帶 S MF8A4"},{"s":"MF8C4TA/A","n":"AW S11 CL 42 灰鋁/黑帶 L MF8C4"},{"s":"MF8E4TA/A","n":"AW S11 CL 42 金鋁/粉帶 S MF8E4"},{"s":"MF8F4TA/A","n":"AW S11 CL 42 金鋁/粉帶 L MF8F4"},{"s":"MF8H4TA/A","n":"AW S11 CL 42 銀鋁/紫帶 S MF8H4"},{"s":"MF8J4TA/A","n":"AW S11 CL 42 銀鋁/紫帶 L MF8J4"},{"s":"MF8M4TA/A","n":"AW S11 CL 42 原鈦/灰帶 S MF8M4"},{"s":"MF8N4TA/A","n":"AW S11 CL 42 原鈦/灰帶 L MF8N4"},{"s":"MF8P4TA/A","n":"AW S11 CL 42 原鈦/原米 MF8P4"},{"s":"MF8R4TA/A","n":"AW S11 CL 42 石鈦/黑帶 S MF8R4"},{"s":"MF8T4TA/A","n":"AW S11 CL 42 石鈦/黑帶 L MF8T4"},{"s":"MF8U4TA/A","n":"AW S11 CL 42 石鈦/石米 MF8U4"},{"s":"MF8W4TA/A","n":"AW S11 CL 42 金鈦/粉帶 S MF8W4"},{"s":"MF8X4TA/A","n":"AW S11 CL 42 金鈦/粉帶 L MF8X4"},{"s":"MF8Y4TA/A","n":"AW S11 CL 42 金鈦/金米 MF8Y4"},{"s":"MFC24TA/A","n":"AW S11 CL 46 黑鋁/黑帶 S MFC24"},{"s":"MFC44TA/A","n":"AW S11 CL 46 黑鋁/黑帶 L MFC44"},{"s":"MFC94TA/A","n":"AW S11 CL 46 灰鋁/黑帶 S MFC94"},{"s":"MFCA4TA/A","n":"AW S11 CL 46 灰鋁/黑帶 L MFCA4"},{"s":"MFCG4TA/A","n":"AW S11 CL 46 金鋁/粉帶 S MFCG4"},{"s":"MFCJ4TA/A","n":"AW S11 CL 46 金鋁/粉帶 L MFCJ4"},{"s":"MFCP4TA/A","n":"AW S11 CL 46 銀鋁/紫帶 S MFCP4"},{"s":"MFCR4TA/A","n":"AW S11 CL 46 銀鋁/紫帶 L MFCR4"},{"s":"MFCW4TA/A","n":"AW S11 CL 46 原鈦/灰帶 S MFCW4"},{"s":"MFCX4TA/A","n":"AW S11 CL 46 原鈦/灰帶 L MFCX4"},{"s":"MFCY4TA/A","n":"AW S11 CL 46 原鈦/原米 S MFCY4"},{"s":"MFD04TA/A","n":"AW S11 CL 46 原鈦/原米 L MFD04"},{"s":"MFD14TA/A","n":"AW S11 CL 46 石鈦/黑帶 S MFD14"},{"s":"MFD24TA/A","n":"AW S11 CL 46 石鈦/黑帶 L MFD24"},{"s":"MFD34TA/A","n":"AW S11 CL 46 石鈦/石米 S MFD34"},{"s":"MFD44TA/A","n":"AW S11 CL 46 石鈦/石米 L MFD44"},{"s":"MFD54TA/A","n":"AW S11 CL 46 金鈦/粉帶 S MFD54"},{"s":"MFD64TA/A","n":"AW S11 CL 46 金鈦/粉帶 L MFD64"},{"s":"MFD74TA/A","n":"AW S11 CL 46 金鈦/金米 S MFD74"},{"s":"MFD84TA/A","n":"AW S11 CL 46 金鈦/金米 L MFD84"},{"s":"MEWH4TA/A","n":"AW Ultra 原鈦/海洋藍 MEWH4"},{"s":"MEWK4TA/A","n":"AW Ultra 原鈦/高山藍環 S MEWK4"},{"s":"MEWM4TA/A","n":"AW Ultra 原鈦/高山藍環 M MEWM4"},{"s":"MEWP4TA/A","n":"AW Ultra 原鈦/高山藍環 L MEWP4"},{"s":"MEWR4TA/A","n":"AW Ultra 原鈦/越野藍環 S MEWR4"},{"s":"MEWU4TA/A","n":"AW Ultra 原鈦/越野藍環 L MEWU4"},{"s":"MEWW4TA/A","n":"AW Ultra 原鈦/原米蘭環 S MEWW4"},{"s":"MEWY4TA/A","n":"AW Ultra 原鈦/原米蘭環 M MEWY4"},{"s":"MF0E4TA/A","n":"AW Ultra 原鈦/原米蘭環 L MF0E4"},{"s":"MF0J4TA/A","n":"AW Ultra 黑鈦/海洋黑 MF0J4"},{"s":"MF0Q4TA/A","n":"AW Ultra 黑鈦/高山黑環 S MF0Q4"},{"s":"MF0V4TA/A","n":"AW Ultra 黑鈦/高山黑環 M MF0V4"},{"s":"MF0X4TA/A","n":"AW Ultra 黑鈦/高山黑環 L MF0X4"},{"s":"MF1D4TA/A","n":"AW Ultra 黑鈦/越野黑環 S MF1D4"},{"s":"MF1H4TA/A","n":"AW Ultra 黑鈦/越野黑環 L MF1H4"},{"s":"MF1N4TA/A","n":"AW Ultra 黑鈦/黑米蘭環 S MF1N4"},{"s":"MF1Q4TA/A","n":"AW Ultra 黑鈦/黑米蘭環 M MF1Q4"},{"s":"MF1T4TA/A","n":"AW Ultra 黑鈦/黑米蘭環 L MF1T4"},{"s":"MGYW4FE/A","n":"iPhone 16e 矽膠殼 黃 MGYW4"},{"s":"MGF24FE/A","n":"iPhone 17 透明殼 MGF24"},{"s":"MGFT4FE/A","n":"iPhone 17P 透明殼 MGFT4"},{"s":"MGFW4FE/A","n":"iPhone 17PM 透明殼 MGFW4"},{"s":"MGEV4FE/A","n":"iPhone 17 矽膠殼 霓虹黃 MGEV4"},{"s":"MGEW4FE/A","n":"iPhone 17 矽膠殼 錨藍 MGEW4"},{"s":"MGEX4FE/A","n":"iPhone 17 矽膠殼 淡青苔 MGEX4"},{"s":"MGF04FE/A","n":"iPhone 17 矽膠殼 霧紫 MGF04"},{"s":"MGF14FE/A","n":"iPhone 17 矽膠殼 黑 MGF14"},{"s":"MGH24FE/A","n":"iPhone Air 保護殼 暗影 MGH24"},{"s":"MGH34FE/A","n":"iPhone Air 保護殼 冰霜 MGH34"},{"s":"MH004FE/A","n":"iPhone Air 防護邊框 黑 MH004"},{"s":"MH014FE/A","n":"iPhone Air 防護邊框 淺灰 MH014"},{"s":"MH024FE/A","n":"iPhone Air 防護邊框 淺藍 MH024"},{"s":"MH044FE/A","n":"iPhone Air 防護邊框 小麥 MH044"},{"s":"MGFE4FE/A","n":"iPhone 17P 矽膠殼 橙 MGFE4"},{"s":"MGFF4FE/A","n":"iPhone 17P 矽膠殼 黃 MGFF4"},{"s":"MGFG4FE/A","n":"iPhone 17P 矽膠殼 紫 MGFG4"},{"s":"MGFH4FE/A","n":"iPhone 17P 矽膠殼 午 MGFH4"},{"s":"MGFJ4FE/A","n":"iPhone 17P 矽膠殼 陶 MGFJ4"},{"s":"MGFK4FE/A","n":"iPhone 17P 矽膠殼 黑 MGFK4"},{"s":"MGF34FE/A","n":"iPhone 17P 織紋殼 黑 MGF34"},{"s":"MGF44FE/A","n":"iPhone 17P 織紋殼 藍 MGF44"},{"s":"MGF54FE/A","n":"iPhone 17P 織紋殼 紫 MGF54"},{"s":"MGF64FE/A","n":"iPhone 17P 織紋殼 褐 MGF64"},{"s":"MGF74FE/A","n":"iPhone 17P 織紋殼 綠 MGF74"},{"s":"MGFL4FE/A","n":"iPhone 17PM 矽膠殼 橙 MGFL4"},{"s":"MGFM4FE/A","n":"iPhone 17PM 矽膠殼 黃 MGFM4"},{"s":"MGFN4FE/A","n":"iPhone 17PM 矽膠殼 紫 MGFN4"},{"s":"MGFP4FE/A","n":"iPhone 17PM 矽膠殼 午 MGFP4"},{"s":"MGFQ4FE/A","n":"iPhone 17PM 矽膠殼 陶 MGFQ4"},{"s":"MGFR4FE/A","n":"iPhone 17PM 矽膠殼 黑 MGFR4"},{"s":"MGF84FE/A","n":"iPhone 17PM 織紋殼 黑 MGF84"},{"s":"MGF94FE/A","n":"iPhone 17PM 織紋殼 藍 MGF94"},{"s":"MGFA4FE/A","n":"iPhone 17PM 織紋殼 紫 MGFA4"},{"s":"MGFC4FE/A","n":"iPhone 17PM 織紋殼 褐 MGFC4"},{"s":"MGFD4FE/A","n":"iPhone 17PM 織紋殼 綠 MGFD4"},{"s":"MGH64FE/A","n":"iPhone 織紋卡套 狐橙 MGH64"},{"s":"MGH74FE/A","n":"iPhone 織紋卡套 青苔 MGH74"},{"s":"MGH84FE/A","n":"iPhone 織紋卡套 午紫 MGH84"},{"s":"MGH94FE/A","n":"iPhone 織紋卡套 軍藍 MGH94"},{"s":"MGHA4FE/A","n":"iPhone 織紋卡套 黑 MGHA4"},{"s":"MGGD4FE/A","n":"斜背掛繩 橙 MGGD4"},{"s":"MGGE4FE/A","n":"斜背掛繩 霓虹黃 MGGE4"},{"s":"MGGF4FE/A","n":"斜背掛繩 綠 MGGF4"},{"s":"MGGG4FE/A","n":"斜背掛繩 藍 MGGG4"},{"s":"MGGH4FE/A","n":"斜背掛繩 淡藍 MGGH4"},{"s":"MGGJ4FE/A","n":"斜背掛繩 紫 MGGJ4"},{"s":"MGGK4FE/A","n":"斜背掛繩 小麥 MGGK4"},{"s":"MGGL4FE/A","n":"斜背掛繩 黑 MGGL4"},{"s":"MGGM4FE/A","n":"斜背掛繩 淺灰 MGGM4"},{"s":"MGGN4FE/A","n":"斜背掛繩 赭褐 MGGN4"},{"s":"MGFX4FE/A","n":"AirTag 織紋鑰匙圈 青苔 MGFX4"},{"s":"MGFY4FE/A","n":"AirTag 織紋鑰匙圈 狐橙 MGFY4"},{"s":"MGG04FE/A","n":"AirTag 織紋鑰匙圈 午紫 MGG04"},{"s":"MGG14FE/A","n":"AirTag 織紋鑰匙圈 軍藍 MGG14"},{"s":"MGG24FE/A","n":"AirTag 織紋鑰匙圈 黑 MGG24"},{"s":"MGKQ4J/A","n":"40W 電源轉接器 MGKQ4"},{"s":"MGD74TA/A","n":"MagSafe 充電器 1m MGD74"},{"s":"MGDM4TA/A","n":"MagSafe 充電器 2m MGDM4"},{"s":"MGPG4TA/A","n":"iPhone Air MagSafe 電池 MGPG4"},{"s":"MFF64FE/A","n":"40 運動錶環 錨藍 MFF64"},{"s":"MFF74FE/A","n":"40 運動錶環 森林 MFF74"},{"s":"MFF84FE/A","n":"40 運動錶環 霧紫 MFF84"},{"s":"MFF94FE/A","n":"40 運動錶環 霓虹黃 MFF94"},{"s":"MFFA4FE/A","n":"40 運動錶環 深灰 MFFA4"},{"s":"MFFC4FE/A","n":"42 運動錶環 錨藍 MFFC4"},{"s":"MFFD4FE/A","n":"42 運動錶環 森林 MFFD4"},{"s":"MFFE4FE/A","n":"42 運動錶環 霧紫 MFFE4"},{"s":"MFFF4FE/A","n":"42 運動錶環 霓虹黃 MFFF4"},{"s":"MFFG4FE/A","n":"42 運動錶環 深灰 MFFG4"},{"s":"MFFH4FE/A","n":"46 運動錶環 錨藍 MFFH4"},{"s":"MFFJ4FE/A","n":"46 運動錶環 森林 MFFJ4"},{"s":"MFFK4FE/A","n":"46 運動錶環 霧紫 MFFK4"},{"s":"MFFL4FE/A","n":"46 運動錶環 霓虹黃 MFFL4"},{"s":"MFFM4FE/A","n":"46 運動錶環 深灰 MFFM4"},{"s":"MFFN4FE/A","n":"46 運動錶環 深灰 XL MFFN4"},{"s":"MFFT4FE/A","n":"40 運動錶帶 霓虹黃 SM MFFT4"},{"s":"MFFU4FE/A","n":"40 運動錶帶 霓虹黃 ML MFFU4"},{"s":"MFFV4FE/A","n":"40 運動錶帶 錨藍 SM MFFV4"},{"s":"MFFW4FE/A","n":"40 運動錶帶 錨藍 ML MFFW4"},{"s":"MFFX4FE/A","n":"40 運動錶帶 霧紫 SM MFFX4"},{"s":"MFFY4FE/A","n":"40 運動錶帶 霧紫 ML MFFY4"},{"s":"MFGC4FE/A","n":"42 運動錶帶 霓虹黃 SM MFGC4"},{"s":"MFGD4FE/A","n":"42 運動錶帶 霓虹黃 ML MFGD4"},{"s":"MFGE4FE/A","n":"42 運動錶帶 錨藍 SM MFGE4"},{"s":"MFGF4FE/A","n":"42 運動錶帶 錨藍 ML MFGF4"},{"s":"MFGG4FE/A","n":"42 運動錶帶 霧紫 SM MFGG4"},{"s":"MFGH4FE/A","n":"42 運動錶帶 霧紫 ML MFGH4"},{"s":"MFGV4FE/A","n":"46 運動錶帶 霓虹黃 SM MFGV4"},{"s":"MFGW4FE/A","n":"46 運動錶帶 霓虹黃 ML MFGW4"},{"s":"MFGX4FE/A","n":"46 運動錶帶 錨藍 SM MFGX4"},{"s":"MFGY4FE/A","n":"46 運動錶帶 錨藍 ML MFGY4"},{"s":"MFH04FE/A","n":"46 運動錶帶 霧紫 SM MFH04"},{"s":"MFH14FE/A","n":"46 運動錶帶 霧紫 ML MFH14"},{"s":"MFT44FE/A","n":"49 原鈦越野錶環 綠 SM MFT44"},{"s":"MFT54FE/A","n":"49 原鈦越野錶環 綠 ML MFT54"},{"s":"MFT64FE/A","n":"49 原鈦越野錶環 藍 SM MFT64"},{"s":"MFT74FE/A","n":"49 原鈦越野錶環 藍 ML MFT74"},{"s":"MFT84FE/A","n":"49 原鈦越野錶環 黑 SM MFT84"},{"s":"MFT94FE/A","n":"49 原鈦越野錶環 黑 ML MFT94"},{"s":"MFTA4FE/A","n":"49 原鈦高山錶環 赤陶 S MFTA4"},{"s":"MFTC4FE/A","n":"49 原鈦高山錶環 赤陶 M MFTC4"},{"s":"MFTD4FE/A","n":"49 原鈦高山錶環 赤陶 L MFTD4"},{"s":"MFTE4FE/A","n":"49 原鈦高山錶環 黑 S MFTE4"},{"s":"MFTF4FE/A","n":"49 原鈦高山錶環 黑 M MFTF4"},{"s":"MFTG4FE/A","n":"49 原鈦高山錶環 黑 L MFTG4"},{"s":"MFTH4FE/A","n":"49 原鈦高山錶環 淡藍 S MFTH4"},{"s":"MFTJ4FE/A","n":"49 原鈦高山錶環 淡藍 M MFTJ4"},{"s":"MFTK4FE/A","n":"49 原鈦高山錶環 淡藍 L MFTK4"},{"s":"MG9D4FE/A","n":"49 黑鈦高山錶環 赤陶 S MG9D4"},{"s":"MG9E4FE/A","n":"49 黑鈦高山錶環 赤陶 M MG9E4"},{"s":"MG9F4FE/A","n":"49 黑鈦高山錶環 赤陶 L MG9F4"},{"s":"MG9G4FE/A","n":"49 黑鈦高山錶環 黑 S MG9G4"},{"s":"MG9H4FE/A","n":"49 黑鈦高山錶環 黑 M MG9H4"},{"s":"MG9J4FE/A","n":"49 黑鈦高山錶環 黑 L MG9J4"},{"s":"MG9K4FE/A","n":"49 黑鈦高山錶環 淡藍 S MG9K4"},{"s":"MG9L4FE/A","n":"49 黑鈦高山錶環 淡藍 M MG9L4"},{"s":"MG9M4FE/A","n":"49 黑鈦高山錶環 淡藍 L MG9M4"},{"s":"MG9N4FE/A","n":"49 黑鈦越野錶環 綠 SM MG9N4"},{"s":"MG9P4FE/A","n":"49 黑鈦越野錶環 綠 ML MG9P4"},{"s":"MG9Q4FE/A","n":"49 黑鈦越野錶環 藍 SM MG9Q4"},{"s":"MG9R4FE/A","n":"49 黑鈦越野錶環 藍 ML MG9R4"},{"s":"MG9T4FE/A","n":"49 黑鈦越野錶環 黑 SM MG9T4"},{"s":"MG9U4FE/A","n":"49 黑鈦越野錶環 黑 ML MG9U4"},{"s":"MG9V4FE/A","n":"40 N 運動錶帶 螢光綠 SM MG9V4"},{"s":"MG9W4FE/A","n":"40 N 運動錶帶 螢光綠 ML MG9W4"},{"s":"MG9X4FE/A","n":"40 N 運動錶帶 午夜黑 SM MG9X4"},{"s":"MG9Y4FE/A","n":"40 N 運動錶帶 午夜黑 ML MG9Y4"},{"s":"MGA04FE/A","n":"40 N 運動錶帶 朦朧灰 SM MGA04"},{"s":"MGA34FE/A","n":"40 N 運動錶帶 朦朧灰 ML MGA34"},{"s":"MGA44FE/A","n":"40 N 運動錶帶 峰霞粉 SM MGA44"},{"s":"MGA64FE/A","n":"40 N 運動錶帶 峰霞粉 ML MGA64"},{"s":"MGA74FE/A","n":"40 N 運動錶帶 藍帶 SM MGA74"},{"s":"MGA84FE/A","n":"40 N 運動錶帶 藍帶 ML MGA84"},{"s":"MGA94FE/A","n":"42 N 運動錶帶 螢光綠 SM MGA94"},{"s":"MGAA4FE/A","n":"42 N 運動錶帶 螢光綠 ML MGAA4"},{"s":"MGAE4FE/A","n":"42 N 運動錶帶 午夜黑 SM MGAE4"},{"s":"MGAF4FE/A","n":"42 N 運動錶帶 午夜黑 ML MGAF4"},{"s":"MGAH4FE/A","n":"42 N 運動錶帶 朦朧灰 SM MGAH4"},{"s":"MGAJ4FE/A","n":"42 N 運動錶帶 朦朧灰 ML MGAJ4"},{"s":"MGAQ4FE/A","n":"42 N 運動錶帶 峰霞粉 SM MGAQ4"},{"s":"MGAU4FE/A","n":"42 N 運動錶帶 峰霞粉 ML MGAU4"},{"s":"MGAV4FE/A","n":"42 N 運動錶帶 藍帶 SM MGAV4"},{"s":"MGAX4FE/A","n":"42 N 運動錶帶 藍帶 ML MGAX4"},{"s":"MGC04FE/A","n":"46 N 運動錶帶 螢光綠 SM MGC04"},{"s":"MGC14FE/A","n":"46 N 運動錶帶 螢光綠 ML MGC14"},{"s":"MGC24FE/A","n":"46 N 運動錶帶 午夜黑 SM MGC24"},{"s":"MGC34FE/A","n":"46 N 運動錶帶 午夜黑 ML MGC34"},{"s":"MGC44FE/A","n":"46 N 運動錶帶 朦朧灰 SM MGC44"},{"s":"MGC54FE/A","n":"46 N 運動錶帶 朦朧灰 ML MGC54"},{"s":"MGC64FE/A","n":"46 N 運動錶帶 峰霞粉 SM MGC64"},{"s":"MGC74FE/A","n":"46 N 運動錶帶 峰霞粉 ML MGC74"},{"s":"MGC94FE/A","n":"46 N 運動錶帶 藍帶 SM MGC94"},{"s":"MGCA4FE/A","n":"46 N 運動錶帶 藍帶 ML MGCA4"},{"s":"MGCC4FE/A","n":"49 原鈦海洋錶帶 錨藍 MGCC4"},{"s":"MGCE4FE/A","n":"49 原鈦海洋錶帶延伸 錨藍 MGCE4"},{"s":"MGCF4FE/A","n":"49 原鈦海洋錶帶 霓虹綠 MGCF4"},{"s":"MGCG4FE/A","n":"49 原鈦海洋錶帶延伸 霓虹綠 MGCG4"},{"s":"MGCJ4FE/A","n":"49 黑鈦海洋錶帶 錨藍 MGCJ4"},{"s":"MGCK4FE/A","n":"49 黑鈦海洋錶帶延伸 錨藍 MGCK4"},{"s":"MGCL4FE/A","n":"49 黑鈦海洋錶帶 霓虹綠 MGCL4"},{"s":"MGCM4FE/A","n":"49 黑鈦海洋錶帶延伸 霓虹綠 MGCM4"},{"s":"MGCN4FE/A","n":"40 N 運動錶環 螢光綠 MGCN4"},{"s":"MGCP4FE/A","n":"40 N 運動錶環 午夜黑 MGCP4"},{"s":"MGCQ4FE/A","n":"40 N 運動錶環 朦朧灰 MGCQ4"},{"s":"MGCR4FE/A","n":"40 N 運動錶環 峰霞粉 MGCR4"},{"s":"MGCT4FE/A","n":"40 N 運動錶環 藍帶 MGCT4"},{"s":"MGCW4FE/A","n":"42 N 運動錶環 螢光綠 MGCW4"},{"s":"MGCX4FE/A","n":"42 N 運動錶環 午夜黑 MGCX4"},{"s":"MGCY4FE/A","n":"42 N 運動錶環 朦朧灰 MGCY4"},{"s":"MGD04FE/A","n":"42 N 運動錶環 峰霞粉 MGD04"},{"s":"MGD14FE/A","n":"42 N 運動錶環 藍帶 MGD14"},{"s":"MGD24FE/A","n":"46 N 運動錶環 螢光綠 MGD24"},{"s":"MGD34FE/A","n":"46 N 運動錶環 午夜黑 MGD34"},{"s":"MGD44FE/A","n":"46 N 運動錶環 朦朧灰 MGD44"},{"s":"MGD54FE/A","n":"46 N 運動錶環 峰霞粉 MGD54"},{"s":"MGD64FE/A","n":"46 N 運動錶環 藍帶 MGD64"},{"s":"MGD84FE/A","n":"42 磁鏈錶帶 焦糖 S/M MGD84"},{"s":"MGD94FE/A","n":"42 磁鏈錶帶 焦糖 M/L MGD94"},{"s":"MGDA4FE/A","n":"42 磁鏈錶帶 軍藍 S/M MGDA4"},{"s":"MGDC4FE/A","n":"42 磁鏈錶帶 軍藍 M/L MGDC4"},{"s":"MGDD4FE/A","n":"42 磁鏈錶帶 鼠尾灰 S/M MGDD4"},{"s":"MGDE4FE/A","n":"42 磁鏈錶帶 鼠尾灰 M/L MGDE4"},{"s":"MGDF4FE/A","n":"46 磁鏈錶帶 焦糖 S/M MGDF4"},{"s":"MGDG4FE/A","n":"46 磁鏈錶帶 焦糖 M/L MGDG4"},{"s":"MGDH4FE/A","n":"46 磁鏈錶帶 軍藍 S/M MGDH4"},{"s":"MGDJ4FE/A","n":"46 磁鏈錶帶 軍藍 M/L MGDJ4"},{"s":"MGDK4FE/A","n":"46 磁鏈錶帶 鼠尾灰 S/M MGDK4"},{"s":"MGDL4FE/A","n":"46 磁鏈錶帶 鼠尾灰 M/L MGDL4"},{"s":"MGG34FE/A","n":"42 時尚環扣 焦糖 S MGG34"},{"s":"MGG44FE/A","n":"42 時尚環扣 焦糖 M MGG44"},{"s":"MGG54FE/A","n":"42 時尚環扣 焦糖 L MGG54"},{"s":"MGG64FE/A","n":"42 時尚環扣 午紫 S MGG64"},{"s":"MGG74FE/A","n":"42 時尚環扣 午紫 M MGG74"},{"s":"MGG84FE/A","n":"42 時尚環扣 午紫 L MGG84"},{"s":"MGG94FE/A","n":"42 時尚環扣 鼠尾灰 S MGG94"},{"s":"MGGA4FE/A","n":"42 時尚環扣 鼠尾灰 M MGGA4"},{"s":"MGGC4FE/A","n":"42 時尚環扣 鼠尾灰 L MGGC4"},{"s":"MGHN4FE/A","n":"49 原鈦米蘭錶環 S MGHN4"},{"s":"MGHP4FE/A","n":"49 原鈦米蘭錶環 M MGHP4"},{"s":"MGHQ4FE/A","n":"49 原鈦米蘭錶環 L MGHQ4"},{"s":"MGHR4FE/A","n":"49 黑鈦米蘭錶環 S MGHR4"},{"s":"MGHT4FE/A","n":"49 黑鈦米蘭錶環 M MGHT4"},{"s":"MGHU4FE/A","n":"49 黑鈦米蘭錶環 L MGHU4"},{"s":"MGHV4FE/A","n":"40 原米蘭錶環 MGHV4"},{"s":"MGHW4FE/A","n":"40 金米蘭錶環 MGHW4"},{"s":"MGHX4FE/A","n":"40 石米蘭錶環 MGHX4"},{"s":"MGHY4FE/A","n":"42 原米蘭錶環 MGHY4"},{"s":"MGJ04FE/A","n":"42 金米蘭錶環 MGJ04"},{"s":"MGJ14FE/A","n":"42 石米蘭錶環 MGJ14"},{"s":"MGJ24FE/A","n":"46 原米蘭錶環 S/M MGJ24"},{"s":"MGJ34FE/A","n":"46 原米蘭錶環 M/L MGJ34"},{"s":"MGJ44FE/A","n":"46 金米蘭錶環 S/M MGJ44"},{"s":"MGJ54FE/A","n":"46 金米蘭錶環 M/L MGJ54"},{"s":"MGJ64FE/A","n":"46 石米蘭錶環 S/M MGJ64"},{"s":"MGJ74FE/A","n":"46 石米蘭錶環 M/L MGJ74"},{"s":"MGXU4FE/A","n":"41 運動錶環 驕傲 MGXU4"},{"s":"MGXV4FE/A","n":"45 運動錶環 驕傲 MGXV4"},{"s":"SYLW2TA/A","n":"AC+ for AirPods Pro 3 SYLW2T"},{"s":"SWXT2TA/A","n":"AC+ for iPhone 17 SWXT2"},{"s":"SWXY2TA/A","n":"AC+ for iPhone Air SWXY2"},{"s":"SWY42TA/A","n":"AC+ for iPhone 17 Pro SWY42"},{"s":"SWY92TA/A","n":"AC+ for iPhone 17 PM SWY92"},{"s":"SXHW2TA/A","n":"AC+ for AW SE 3 SXHW2"},{"s":"SXCJ2TA/A","n":"AC+ for AW S11 SXCJ2"},{"s":"SXCK2TA/A","n":"AC+ for AW Ultra 3 SXCK2"},{"s":"MDE04TA/A","n":"MBP 14 10C/16GB/512GB 黑 MDE04"},{"s":"MDE14TA/A","n":"MBP 14 10C/16GB/1TB 黑 MDE14"},{"s":"MDE34TA/A","n":"MBP 14 10C/24GB/1TB 黑 MDE34"},{"s":"MDE44TA/A","n":"MBP 14 10C/16GB/512GB 銀 MDE44"},{"s":"MDE54TA/A","n":"MBP 14 10C/16GB/1TB 銀 MDE54"},{"s":"MDE64TA/A","n":"MBP 14 10C/24GB/1TB 銀 MDE64"},{"s":"MDWK4TA/A","n":"iPad Pro 11 WIFI 256 黑 MDWK4"},{"s":"MDWL4TA/A","n":"iPad Pro 11 WIFI 256 銀 MDWL4"},{"s":"MDWM4TA/A","n":"iPad Pro 11 WIFI 512 黑 MDWM4"},{"s":"MDWN4TA/A","n":"iPad Pro 11 WIFI 512 銀 MDWN4"},{"s":"MDWP4TA/A","n":"iPad Pro 11 WIFI 1TB 黑 MDWP4"},{"s":"MDWQ4TA/A","n":"iPad Pro 11 WIFI 1TB 銀 MDWQ4"},{"s":"MDWR4TA/A","n":"iPad Pro 11 WF 1T NTG 黑 MDWR4"},{"s":"MDWT4TA/A","n":"iPad Pro 11 WF 1T NTG 銀 MDWT4"},{"s":"MDWU4TA/A","n":"iPad Pro 11 WIFI 2TB 黑 MDWU4"},{"s":"MDWV4TA/A","n":"iPad Pro 11 WIFI 2TB 銀 MDWV4"},{"s":"MDWW4TA/A","n":"iPad Pro 11 WF 2T NTG 黑 MDWW4"},{"s":"MDWX4TA/A","n":"iPad Pro 11 WF 2T NTG 銀 MDWX4"},{"s":"MDYJ4TA/A","n":"iPad Pro 13 WIFI 256 黑 MDYJ4"},{"s":"MDYK4TA/A","n":"iPad Pro 13 WIFI 256 銀 MDYK4"},{"s":"MDYL4TA/A","n":"iPad Pro 13 WIFI 512 黑 MDYL4"},{"s":"MDYM4TA/A","n":"iPad Pro 13 WIFI 512 銀 MDYM4"},{"s":"MDYN4TA/A","n":"iPad Pro 13 WIFI 1TB 黑 MDYN4"},{"s":"MDYP4TA/A","n":"iPad Pro 13 WIFI 1TB 銀 MDYP4"},{"s":"MDYQ4TA/A","n":"iPad Pro 13 WF 1T NTG 黑 MDYQ4"},{"s":"MDYR4TA/A","n":"iPad Pro 13 WF 1T NTG 銀 MDYR4"},{"s":"MDYT4TA/A","n":"iPad Pro 13 WIFI 2TB黑 MDYT4"},{"s":"MDYU4TA/A","n":"iPad Pro 13 WIFI 2TB 銀 MDYU4"},{"s":"ME2N4TA/A","n":"iPad Pro 11 CL 256 黑 ME2N4"},{"s":"ME2P4TA/A","n":"iPad Pro 11 CL 256 銀 ME2P4"},{"s":"ME2Q4TA/A","n":"iPad Pro 11 CL 512 黑 ME2Q4"},{"s":"ME2T4TA/A","n":"iPad Pro 11 CL 512 銀 ME2T4"},{"s":"ME2U4TA/A","n":"iPad Pro 11 CL 1TB 黑 ME2U4"},{"s":"ME2V4TA/A","n":"iPad Pro 11 CL 1TB 銀 ME2V4"},{"s":"ME2W4TA/A","n":"iPad Pro 11 CL 1T NTG 黑 ME2W4"},{"s":"ME2X4TA/A","n":"iPad Pro 11 CL 1T NTG 銀 ME2X4"},{"s":"ME2Y4TA/A","n":"iPad Pro 11 CL 2TB 黑 ME2Y4"},{"s":"ME6A4TA/A","n":"iPad Pro 11 CL 2TB 銀 ME6A4"},{"s":"ME6C4TA/A","n":"iPad Pro 11 CL 2T NTG 黑 ME6C4"},{"s":"ME6D4TA/A","n":"iPad Pro 11 CL 2T NTG 銀 ME6D4"},{"s":"ME7W4TA/A","n":"iPad Pro 13 CL 256 黑 ME7W4"},{"s":"ME7X4TA/A","n":"iPad Pro 13 CL 256 銀 ME7X4"},{"s":"ME7Y4TA/A","n":"iPad Pro 13 CL 512 黑 ME7Y4"},{"s":"ME8C4TA/A","n":"iPad Pro 13 CL 512 銀 ME8C4"},{"s":"ME8D4TA/A","n":"iPad Pro 13 CL 1TB 黑 ME8D4"},{"s":"ME8F4TA/A","n":"iPad Pro 13 CL 1TB 銀 ME8F4"},{"s":"ME8G4TA/A","n":"iPad Pro 13 CL 1T NTG 黑 ME8G4"},{"s":"ME8H4TA/A","n":"iPad Pro 13 CL 1T NTG 銀 ME8H4"},{"s":"ME8J4TA/A","n":"iPad Pro 13 CL 2TB 黑 ME8J4"},{"s":"ME8K4TA/A","n":"iPad Pro 13 CL 2TB 銀 ME8K4"},{"s":"ME8M4TA/A","n":"iPad Pro 13 CL 2T NTG 黑 ME8M4"},{"s":"ME8N4TA/A","n":"iPad Pro 13 CL 2T NTG 銀 ME8N4"},{"s":"MGYX4TA/A","n":"Air 11 M2/3 巧控鍵盤 黑 MGYX4"},{"s":"MGYY4TA/A","n":"Air 13 M2/3 巧控鍵盤 黑 MGYY4"},{"s":"SXKH2TA/A","n":"AC+ for M5 MBP 14 SXKH2"},{"s":"SXT02TA/A","n":"AC+ for M5 iPad Pro 11 SXT02"},{"s":"SXT12TA/A","n":"AC+ for M5 iPad Pro 13 SXT02"},{"s":"2000130306780","n":"[i]Care iPhone 一年期_3120"},{"s":"2000130306797","n":"[i]Care iPhone 兩年期_4770"},{"s":"2000130306803","n":"[i]Care iPhoneAr/Pr/PM一年4170"},{"s":"2000130306810","n":"[i]Care iPhoneAr/Pr/PM兩年6220"},{"s":"2000130313566","n":"[i]Care iPhone 17e 一年_2390"},{"s":"2000130313573","n":"[i]Care iPhone 17e 兩年_3830"},{"s":"2000130306827","n":"[i]Care Airpods Pro 兩年_959"},{"s":"MFE94TA/A","n":"AirTag 一入 MFE94"},{"s":"MFEA4TA/A","n":"AirTag 四入 MFEA4"},{"s":"MHY24FE/A","n":"40 運動錶帶 嫩粉 S/M MHY24"},{"s":"MHY34FE/A","n":"40 運動錶帶 嫩粉  M/L MHY34"},{"s":"MHY44FE/A","n":"40 運動錶帶 亮芭樂紅 S/M MHY44"},{"s":"MHY54FE/A","n":"40 運動錶帶 亮芭樂紅 M/L MHY54"},{"s":"MHY64FE/A","n":"40 運動錶帶 柑橘 S/M MHY64"},{"s":"MHY74FE/A","n":"40 運動錶帶 柑橘 M/L MHY74"},{"s":"MHY84FE/A","n":"42 運動錶帶 嫩粉 S/M MHY84"},{"s":"MHY94FE/A","n":"42 運動錶帶 嫩粉 M/L MHY94"},{"s":"MHYA4FE/A","n":"42 運動錶帶 亮芭樂紅 S/M MHYA4"},{"s":"MHYC4FE/A","n":"42 運動錶帶 亮芭樂紅 M/L MHYC4"},{"s":"MHYD4FE/A","n":"42 運動錶帶 柑橘 S/M MHYD4"},{"s":"MHYE4FE/A","n":"42 運動錶帶 柑橘 M/L MHYE4"},{"s":"MHYF4FE/A","n":"46 運動錶帶 嫩粉 S/M MHYF4"},{"s":"MHYG4FE/A","n":"46 運動錶帶 嫩粉 M/L MHYG4"},{"s":"MHYH4FE/A","n":"46 運動錶帶 亮芭樂紅 S/M MHYH4"},{"s":"MHYJ4FE/A","n":"46 運動錶帶 亮芭樂紅 M/L MHYJ4"},{"s":"MHYK4FE/A","n":"46 運動錶帶 柑橘 S/M MHYK4"},{"s":"MHYL4FE/A","n":"46 運動錶帶 柑橘 M/L MHYL4"},{"s":"MHYM4FE/A","n":"40 運動錶環 藍霧 MHYM4"},{"s":"MHYN4FE/A","n":"40 運動錶環 哈密瓜 MHYN4"},{"s":"MHYP4FE/A","n":"40 運動錶環 亮芭樂紅 MHYP4"},{"s":"MHYQ4FE/A","n":"42 運動錶環 藍霧 MHYQ4"},{"s":"MHYR4FE/A","n":"42 運動錶環 哈密瓜 MHYR4"},{"s":"MHYT4FE/A","n":"42 運動錶環 亮芭樂紅 MHYT4"},{"s":"MHYU4FE/A","n":"46 運動錶環 藍霧 MHYU4"},{"s":"MHYV4FE/A","n":"46 運動錶環 哈密瓜 MHYV4"},{"s":"MHYW4FE/A","n":"46 運動錶環 亮芭樂紅 MHYW4"},{"s":"MHVM4FE/A","n":"iPhone 17 矽膠殼 香草 MHVM4"},{"s":"MHVQ4FE/A","n":"iPhone 17 矽膠殼 芭樂紅 MHVQ4"},{"s":"MHVT4FE/A","n":"iPhone 17 矽膠殼 薰衣草 MHVT4"},{"s":"MHVX4FE/A","n":"iPhone 17P 矽膠殼 香草 MHVX4"},{"s":"MHW04FE/A","n":"iPhone 17P 矽膠殼 芭樂紅 MHW04"},{"s":"MHW54FE/A","n":"iPhone 17PM 矽膠殼 香草 MHW54"},{"s":"MHW64FE/A","n":"iPhone 17PM 矽膠殼 橘紅 MHW64"},{"s":"MHWC4FE/A","n":"iPhone 17e 透明殼 MHWC4"},{"s":"MHWD4FE/A","n":"iPhone 17e 矽膠殼 黑 MHWD4"},{"s":"MHWE4FE/A","n":"iPhone 17e 矽膠殼 錨藍 MHWE4"},{"s":"MHWF4FE/A","n":"iPhone 17e 矽膠殼 淡青苔 MHWF4"},{"s":"MHWG4FE/A","n":"iPhone 17e 矽膠殼 香草 MHWG4"},{"s":"MHWH4FE/A","n":"iPhone 17e 矽膠殼 芭樂紅 MHWH4"},{"s":"MHWJ4FE/A","n":"iPhone 17e 矽膠殼 嫩粉 MHWJ4"},{"s":"MHYX4FE/A","n":"斜背掛繩 芭樂紅 MHYX4"},{"s":"MHYY4FE/A","n":"斜背掛繩 嫩粉 MHYY4"},{"s":"SCV93TA/A","n":"AC+ for iPad Air 11  SCV93"},{"s":"SCVD3TA/A","n":"AC+ for iPad Air 13  SCVD3"},{"s":"SCYW3TA/A","n":"AC+ for iPhone 17e SCYW3"},{"s":"MFEL4TA/A","n":"Studio Display XDR 斜高 MFEL4"},{"s":"MFEN4TA/A","n":"Studio Display XDR 吊 MFEN4"},{"s":"MFEP4TA/A","n":"Studio Display XDR N斜高 MFEP4"},{"s":"MFEQ4TA/A","n":"Studio Display XDR N吊 MFEQ4"},{"s":"MFEW4TA/A","n":"Studio Display 標準斜高 MFEW4"},{"s":"MFEX4TA/A","n":"Studio Display 標準斜 MFEX4"},{"s":"MFEY4TA/A","n":"Studio Display 標準吊 MFEY4"},{"s":"MFF04TA/A","n":"Studio Display NT斜高 MFF04"},{"s":"MFF14TA/A","n":"Studio Display NT斜 MFF14"},{"s":"MFF24TA/A","n":"Studio Display NT吊 MFF24"},{"s":"MHXY4TA/A","n":"70W USB-C Power Adapter MHXY4"},{"s":"MHY14TA/A","n":"140W USB-C Power Adapter MHY14"},{"s":"SD263TA/A","n":"AC+ for Display XDR SD263"},{"s":"SD273TA/A","n":"AC+ for Display (2026) SD273"},{"s":"SCW83TA/A","n":"AC+ for MBA 13 M5 SCW83"},{"s":"SCW93TA/A","n":"AC+ for MBA 15 M5 SCW93"},{"s":"SCXT3TA/A","n":"AC+ for MBP 14 M5P/M5M SCXT3"},{"s":"SCXU3TA/A","n":"AC+ for MBP 16 M5P/M5M SCXU3"},{"s":"MH304TA/A","n":"iPad Air 11 WF 128 灰 MH304"},{"s":"MH314TA/A","n":"iPad Air 11 WF 128 藍 MH314"},{"s":"MH334TA/A","n":"iPad Air 11 WF 128 星光 MH334"},{"s":"MH344TA/A","n":"iPad Air 11 WF 128 紫 MH344"},{"s":"MH354TA/A","n":"iPad Air 11 WF 256 灰 MH354"},{"s":"MH364TA/A","n":"iPad Air 11 WF 256 藍 MH364"},{"s":"MH374TA/A","n":"iPad Air 11 WF 256 星光 MH374"},{"s":"MH394TA/A","n":"iPad Air 11 WF 256 紫 MH394"},{"s":"MH3A4TA/A","n":"iPad Air 11 WF 512 灰 MH3A4"},{"s":"MH3C4TA/A","n":"iPad Air 11 WF 512 藍 MH3C4"},{"s":"MH3D4TA/A","n":"iPad Air 11 WF 512 星光 MH3D4"},{"s":"MH3E4TA/A","n":"iPad Air 11 WF 512 紫 MH3E4"},{"s":"MH3G4TA/A","n":"iPad Air 11 WF 1TB 灰 MH3G4"},{"s":"MH3H4TA/A","n":"iPad Air 11 WF 1TB 藍 MH3H4"},{"s":"MH3J4TA/A","n":"iPad Air 11 WF 1TB 星光 MH3J4"},{"s":"MH3K4TA/A","n":"iPad Air 11 WF 1TB 紫 MH3K4"},{"s":"MH5N4TA/A","n":"iPad Air 13 WF 128 灰 MH5N4"},{"s":"MH5P4TA/A","n":"iPad Air 13 WF 128 藍 MH5P4"},{"s":"MH5Q4TA/A","n":"iPad Air 13 WF 128 星光 MH5Q4"},{"s":"MH5T4TA/A","n":"iPad Air 13 WF 128 紫 MH5T4"},{"s":"MH5U4TA/A","n":"iPad Air 13 WF 256 灰 MH5U4"},{"s":"MH5V4TA/A","n":"iPad Air 13 WF 256 藍 MH5V4"},{"s":"MH5W4TA/A","n":"iPad Air 13 WF 256 星光 MH5W4"},{"s":"MH5X4TA/A","n":"iPad Air 13 WF 256 紫 MH5X4"},{"s":"MH5Y4TA/A","n":"iPad Air 13 WF 512 灰 MH5Y4"},{"s":"MH604TA/A","n":"iPad Air 13 WF 512 藍 MH604"},{"s":"MH614TA/A","n":"iPad Air 13 WF 512 星光 MH614"},{"s":"MH624TA/A","n":"iPad Air 13 WF 512 紫 MH624"},{"s":"MH634TA/A","n":"iPad Air 13 WF 1TB 灰 MH634"},{"s":"MH644TA/A","n":"iPad Air 13 WF 1TB 藍 MH644"},{"s":"MH654TA/A","n":"iPad Air 13 WF 1TB 星光 MH654"},{"s":"MH784TA/A","n":"iPad Air 11 CL 128 灰 MH784"},{"s":"MH794TA/A","n":"iPad Air 11 CL 128 藍 MH794"},{"s":"MH7A4TA/A","n":"iPad Air 11 CL 128 星光 MH7A4"},{"s":"MH7C4TA/A","n":"iPad Air 11 CL 128 紫 MH7C4"},{"s":"MH7D4TA/A","n":"iPad Air 11 CL 256 灰 MH7D4"},{"s":"MH7E4TA/A","n":"iPad Air 11 CL 256 藍 MH7E4"},{"s":"MH7F4TA/A","n":"iPad Air 11 CL 256 星光 MH7F4"},{"s":"MH7G4TA/A","n":"iPad Air 11 CL 256 紫 MH7G4"},{"s":"MH7H4TA/A","n":"iPad Air 11 CL 512 灰 MH7H4"},{"s":"MH7J4TA/A","n":"iPad Air 11 CL 512 藍 MH7J4"},{"s":"MH7K4TA/A","n":"iPad Air 11 CL 512 星光 MH7K4"},{"s":"MH7L4TA/A","n":"iPad Air 11 CL 512 紫 MH7L4"},{"s":"MH7M4TA/A","n":"iPad Air 11 CL 1TB 灰 MH7M4"},{"s":"MH7N4TA/A","n":"iPad Air 11 CL 1TB 藍 MH7N4"},{"s":"MH7P4TA/A","n":"iPad Air 11 CL 1TB 星光 MH7P4"},{"s":"MH7Q4TA/A","n":"iPad Air 11 CL 1TB 紫 MH7Q4"},{"s":"MH9D4TA/A","n":"iPad Air 13 CL 128 灰 MH9D4"},{"s":"MH9E4TA/A","n":"iPad Air 13 CL 128 藍 MH9E4"},{"s":"MH9F4TA/A","n":"iPad Air 13 CL 128 星光 MH9F4"},{"s":"MH9G4TA/A","n":"iPad Air 13 CL 128 紫 MH9G4"},{"s":"MH9H4TA/A","n":"iPad Air 13 CL 256 灰 MH9H4"},{"s":"MH9J4TA/A","n":"iPad Air 13 CL 256 藍 MH9J4"},{"s":"MH9K4TA/A","n":"iPad Air 13 CL 256 星光 MH9K4"},{"s":"MH9L4TA/A","n":"iPad Air 13 CL 256 紫 MH9L4"},{"s":"MH9M4TA/A","n":"iPad Air 13 CL 512 灰 MH9M4"},{"s":"MH9N4TA/A","n":"iPad Air 13 CL 512 藍 MH9N4"},{"s":"MH9P4TA/A","n":"iPad Air 13 CL 512 星光 MH9P4"},{"s":"MH9Q4TA/A","n":"iPad Air 13 CL 512 紫 MH9Q4"},{"s":"MH9R4TA/A","n":"iPad Air 13 CL 1TB 灰 MH9R4"},{"s":"MH9T4TA/A","n":"iPad Air 13 CL 1TB 藍 MH9T4"},{"s":"MH9U4TA/A","n":"iPad Air 13 CL 1TB 星光 MH9U4"},{"s":"MH9V4TA/A","n":"iPad Air 13 CL 1TB 紫 MH9V4"},{"s":"MHDK4TA/A","n":"iPad Air 13 WF 1TB 紫 MHDK4"},{"s":"MHRV4ZP/A","n":"iPhone 17e 256 黑 MHRV4"},{"s":"MHRW4ZP/A","n":"iPhone 17e 256 白 MHRW4"},{"s":"MHRX4ZP/A","n":"iPhone 17e 256 粉 MHRX4"},{"s":"MHRY4ZP/A","n":"iPhone 17e 512 黑 MHRY4"},{"s":"MHU04ZP/A","n":"iPhone 17e 512 白 MHU04"},{"s":"MHU34ZP/A","n":"iPhone 17e 512 粉 MHU34"},{"s":"MDH74TA/A","n":"M5 MBA 13 8GP 16G 512 銀 MDH74"},{"s":"MDH84TA/A","n":"M5 MBA 13 16G 1TB 銀 MDH84"},{"s":"MDH94TA/A","n":"M5 MBA 13 24G 1TB 銀 MDH94"},{"s":"MDHA4TA/A","n":"M5 MBA 13 8GP 16G 512 星 MDHA4"},{"s":"MDHC4TA/A","n":"M5 MBA 13 16G 1TB 星光 MDHC4"},{"s":"MDHD4TA/A","n":"M5 MBA 13 24G 1TB 星光 MDHD4"},{"s":"MDHE4TA/A","n":"M5 MBA 13 8GP 16G 512 午 MDHE4"},{"s":"MDHF4TA/A","n":"M5 MBA 13 16G 1TB 午 MDHF4"},{"s":"MDHG4TA/A","n":"M5 MBA 13 24G 1TB 午 MDHG4"},{"s":"MDHH4TA/A","n":"M5 MBA 13 8GP 16G 512 藍 MDHH4"},{"s":"MDHJ4TA/A","n":"M5 MBA 13 16G 1TB 藍 MDHJ4"},{"s":"MDHK4TA/A","n":"M5 MBA 13 24G 1TB 藍 MDHK4"},{"s":"MDV94TA/A","n":"M5 MBA 15 16G 512 銀 MDV94"},{"s":"MDVA4TA/A","n":"M5 MBA 15 16G 1TB 銀 MDVA4"},{"s":"MDVC4TA/A","n":"M5 MBA 15 24G 1TB 銀 MDVC4"},{"s":"MDVD4TA/A","n":"M5 MBA 15 16G 512 星光 MDVD4"},{"s":"MDVE4TA/A","n":"M5 MBA 15 16G 1TB 星光 MDVE4"},{"s":"MDVF4TA/A","n":"M5 MBA 15 24G 1TB 星光 MDVF4"},{"s":"MDVH4TA/A","n":"M5 MBA 15 16G 512 午 MDVH4"},{"s":"MDVK4TA/A","n":"M5 MBA 15 16G 1TB 午 MDVK4"},{"s":"MDVN4TA/A","n":"M5 MBA 15 24G 1TB 午 MDVN4"},{"s":"MDVQ4TA/A","n":"M5 MBA 15 16G 512 藍 MDVQ4"},{"s":"MDVT4TA/A","n":"M5 MBA 15 16G 1TB 藍 MDVT4"},{"s":"MDVU4TA/A","n":"M5 MBA 15 24G 1TB 藍 MDVU4"},{"s":"MGDN4TA/A","n":"M5P MBP 14 24G 1TB 銀 MGDN4"},{"s":"MGDP4TA/A","n":"M5P MBP 14 24G 2TB 銀 MGDP4"},{"s":"MGDQ4TA/A","n":"M5M MBP 14 36G 2TB 銀 MGDQ4"},{"s":"MGDR4TA/A","n":"M5P MBP 14 24G 1TB 黑 MGDR4"},{"s":"MGDT4TA/A","n":"M5P MBP 14 24G 2TB 黑 MGDT4"},{"s":"MGDU4TA/A","n":"M5M MBP 14 36G 2TB 黑 MGDU4"},{"s":"MGE44TA/A","n":"M5P MBP 16 24G 1TB 銀 MGE44"},{"s":"MGE64TA/A","n":"M5P MBP 16 48G 1TB 銀 MGE64"},{"s":"MGE74TA/A","n":"M5M MBP 16 36G 2TB 銀 MGE74"},{"s":"MGE94TA/A","n":"M5M MBP 16 48G 2TB 銀 MGE94"},{"s":"MGEA4TA/A","n":"M5P MBP 16 24G 1TB 黑 MGEA4"},{"s":"MGEC4TA/A","n":"M5P MBP 16 48G 1TB 黑 MGEC4"},{"s":"MGED4TA/A","n":"M5M MBP 16 36G 2TB 黑 MGED4"},{"s":"MGEE4TA/A","n":"M5M MBP 16 48G 2TB 黑 MGEE4"},{"s":"MJ3D4TA/A","n":"M5 MBP 14 32G 1TB 黑 MJ3D4"},{"s":"MJ3E4TA/A","n":"M5 MBP 14 32G 1TB 銀 MJ3E4"},{"s":"MJLV4TA/A","n":"M5P MBP 14 24G 2TB 銀 MJLV4"},{"s":"MJLW4TA/A","n":"M5P MBP 14 24G 2TB 黑 MJLW4"},{"s":"SD0T3TA/A","n":"AC+ for MBN 13 SD0T3"},{"s":"MHFA4TA/A","n":"MBN 13 8G 256GB 銀 MHFA4"},{"s":"MHFD4TA/A","n":"MBN 13 8G 256GB 青橘黃 MHFD4"},{"s":"MHFF4TA/A","n":"MBN 13 8G 256GB 靛青 MHFF4"},{"s":"MHFH4TA/A","n":"MBN 13 8G 256GB 胭粉 MHFH4"},{"s":"MHFC4TA/A","n":"MBN 13 8G 512GB 銀 MHFC4"},{"s":"MHFE4TA/A","n":"MBN 13 8G 512GB 青橘黃 MHFE4"},{"s":"MHFG4TA/A","n":"MBN 13 8G 512GB 靛青 MHFG4"},{"s":"MHFJ4TA/A","n":"MBN 13 8G 512GB 胭粉 MHFJ4"},{"s":"25188698","n":"Marshall Emberton II 喇叭 銅黑"},{"s":"25188702","n":"Marshall Emberton II 喇叭 白"},{"s":"25230741","n":"Marshall Emberton II 鑄鋼黑"},{"s":"25188703","n":"Marshall Willen 藍牙喇叭 銅黑"},{"s":"25188704","n":"Marshall Willen 藍牙喇叭 白"},{"s":"25198921","n":"Marshall Acton III 藍牙喇叭 黑"},{"s":"25198922","n":"Marshall Acton III 藍牙喇叭 白"},{"s":"25222546","n":"Marshall Acton III 藍牙喇叭 棕"},{"s":"25198923","n":"Marshall Stanmore III 喇叭 黑"},{"s":"25198924","n":"Marshall Stanmore III 喇叭 白"},{"s":"25222547","n":"Marshall Stanmore III 喇叭 棕"},{"s":"25198925","n":"Marshall Woburn III 喇叭 黑"},{"s":"25198926","n":"Marshall Woburn III 喇叭 白"},{"s":"25208453","n":"Marshall Middleton 喇叭 古銅"},{"s":"25208454","n":"Marshall Middleton 喇叭 白"},{"s":"1006712","n":"Marshall Emberton III 古銅黑"},{"s":"1006714","n":"Marshall Emberton III 奶油白"},{"s":"1006714","n":"Marshall Willen II  古銅黑"},{"s":"1006717","n":"Marshall Willen II 奶油白"},{"s":"1008130","n":"Marshall Acton III 夜幕藍"},{"s":"1008137","n":"Marshall Emberton III 夜幕藍"},{"s":"1007429","n":"Marshall Middleton II 奶油白"},{"s":"1007428","n":"Marshall Middleton II 古銅黑"},{"s":"1009086","n":"Marshall Acton III 藍牙喇叭 黑"},{"s":"1009088","n":"Marshall Acton III 藍牙喇叭 棕"},{"s":"1009090","n":"Marshall Acton III 藍牙喇叭 白"},{"s":"MHWK4TA/A","n":"AirPods  Max 2 午夜 MHWK4"},{"s":"MHWL4TA/A","n":"AirPods  Max 2 星光 MHWL4"},{"s":"MHWM4TA/A","n":"AirPods  Max 2 藍 MHWM4"},{"s":"MHWN4TA/A","n":"AirPods  Max 2 橘 MHWN4"},{"s":"MHWP4TA/A","n":"AirPods  Max 2 紫 MHWP4"}];
+
+const modelInput = document.getElementById("modelInput");
+const dropdown = document.getElementById("dropdown");
+const productNameEl = document.getElementById("productName");
+const matchTag = document.getElementById("matchTag");
+const previewBox = document.getElementById("previewBox");
+const fromStore = document.getElementById("fromStore");
+const toStore = document.getElementById("toStore");
+const stockQty = document.getElementById("stockQty");
+const needQty = document.getElementById("needQty");
+const remark = document.getElementById("remark");
+
+let selectedProduct = null;
+let activeIdx = -1;
+let filtered = [];
+
+function normalize(s) {
+  return s.toUpperCase().replace(/[\s\/]/g, "");
+}
+
+function search(q) {
+  if (!q) return [];
+  const nq = normalize(q);
+  const exact = [];
+  const startsWith = [];
+  const contains = [];
+  for (const p of P) {
+    const ns = normalize(p.s);
+    const base = ns.replace(/(TA|FE|ZP|PA|ZA|ZX|TE)A?$/,"");
+    if (base === nq || ns === nq) { exact.push(p); continue; }
+    if (base.startsWith(nq) || ns.startsWith(nq)) { startsWith.push(p); continue; }
+    if (ns.includes(nq) || normalize(p.n).includes(nq)) contains.push(p);
+  }
+  return [...exact, ...startsWith, ...contains].slice(0, 12);
+}
+
+function renderDropdown() {
+  if (filtered.length === 0) {
+    dropdown.classList.remove("open");
+    return;
+  }
+  dropdown.innerHTML = filtered.map((p, i) =>
+    `<div class="item${i === activeIdx ? " active" : ""}" data-i="${i}">` +
+    `<span class="code">${esc(p.s)}</span><span class="name">${esc(p.n)}</span></div>`
+  ).join("");
+  dropdown.classList.add("open");
+  dropdown.querySelectorAll(".item").forEach(el => {
+    el.addEventListener("mousedown", e => {
+      e.preventDefault();
+      selectProduct(filtered[+el.dataset.i]);
+    });
+  });
+}
+
+function esc(s) {
+  const d = document.createElement("span");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function selectProduct(p) {
+  selectedProduct = p;
+  modelInput.value = p.s;
+  productNameEl.textContent = p.n;
+  productNameEl.classList.remove("empty");
+  matchTag.style.display = "inline-block";
+  dropdown.classList.remove("open");
+  activeIdx = -1;
+  updatePreview();
+}
+
+modelInput.addEventListener("input", () => {
+  const q = modelInput.value.trim();
+  if (!q) {
+    selectedProduct = null;
+    productNameEl.textContent = "輸入型號後自動帶入";
+    productNameEl.classList.add("empty");
+    matchTag.style.display = "none";
+    dropdown.classList.remove("open");
+    activeIdx = -1;
+    filtered = [];
+    updatePreview();
+    return;
+  }
+  filtered = search(q);
+  activeIdx = -1;
+  if (filtered.length === 1 && normalize(filtered[0].s).replace(/(TA|FE|ZP|PA|ZA|ZX|TE)A?$/,"") === normalize(q)) {
+    selectProduct(filtered[0]);
+    return;
+  }
+  if (selectedProduct) {
+    selectedProduct = null;
+    productNameEl.textContent = "輸入型號後自動帶入";
+    productNameEl.classList.add("empty");
+    matchTag.style.display = "none";
+  }
+  renderDropdown();
+  updatePreview();
+});
+
+modelInput.addEventListener("keydown", e => {
+  if (!dropdown.classList.contains("open")) return;
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    activeIdx = Math.min(activeIdx + 1, filtered.length - 1);
+    renderDropdown();
+    const active = dropdown.querySelector(".active");
+    if (active) active.scrollIntoView({ block: "nearest" });
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    activeIdx = Math.max(activeIdx - 1, 0);
+    renderDropdown();
+    const active = dropdown.querySelector(".active");
+    if (active) active.scrollIntoView({ block: "nearest" });
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    if (activeIdx >= 0 && activeIdx < filtered.length) {
+      selectProduct(filtered[activeIdx]);
+    }
+  } else if (e.key === "Escape") {
+    dropdown.classList.remove("open");
+    activeIdx = -1;
+  }
+});
+
+modelInput.addEventListener("blur", () => {
+  setTimeout(() => dropdown.classList.remove("open"), 150);
+});
+
+modelInput.addEventListener("focus", () => {
+  if (filtered.length > 0 && !selectedProduct) {
+    dropdown.classList.add("open");
+  }
+});
+
+[fromStore, toStore, stockQty, needQty, remark].forEach(el =>
+  el.addEventListener("input", updatePreview)
+);
+
+function getModelShort() {
+  if (!selectedProduct) return modelInput.value.trim();
+  const s = selectedProduct.s;
+  return s.replace(/\s*(TA|FE|ZP|PA|ZA|ZX|TE)\/A\s*$/i, "");
+}
+
+function updatePreview() {
+  const model = getModelShort() || "";
+  const name = selectedProduct ? selectedProduct.n : "";
+  const lines = [
+    "\uFF1C轉貨需求\uFF1E",
+    "庫存門市：" + fromStore.value,
+    "需求門市：" + toStore.value,
+    "品名：" + name,
+    "型號：" + model,
+    "帳上數量：" + stockQty.value,
+    "需求數量：" + needQty.value,
+    "備註：" + remark.value
+  ];
+  previewBox.textContent = lines.join("\n");
+}
+
+function copyMessage() {
+  const text = previewBox.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copyBtn");
+    btn.classList.add("copied");
+    btn.textContent = "已複製";
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.textContent = "複製訊息";
+      toast.classList.remove("show");
+    }, 1800);
+  });
+}
+
+function resetForm() {
+  modelInput.value = "";
+  fromStore.value = "";
+  toStore.value = "75";
+  stockQty.value = "";
+  needQty.value = "";
+  remark.value = "";
+  selectedProduct = null;
+  productNameEl.textContent = "輸入型號後自動帶入";
+  productNameEl.classList.add("empty");
+  matchTag.style.display = "none";
+  dropdown.classList.remove("open");
+  filtered = [];
+  activeIdx = -1;
+  updatePreview();
+  modelInput.focus();
+}
+
+updatePreview();
+</script>
